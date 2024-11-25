@@ -1,11 +1,11 @@
 import logging
 from typing import Any
 from temporalio import activity, workflow
-from llama_index.core import Document
 
 with workflow.unsafe.imports_passed_through():
     from hivemind_etl.website.module import ModulesWebsite
     from hivemind_etl.website.website_etl import WebsiteETL
+    from llama_index.core import Document
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
