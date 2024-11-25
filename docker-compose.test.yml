@@ -1,6 +1,6 @@
 services:
 
-  worker:
+  app:
     build:
       context: .
       target: test
