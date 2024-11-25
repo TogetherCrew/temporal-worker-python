@@ -4,6 +4,7 @@ services:
     build:
       context: .
       target: test
+      dockerfile: Dockerfile
     environment:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
@@ -27,20 +28,29 @@ services:
       - EMBEDDING_DIM=1024
       - OPENAI_API_KEY=sk-example
       - COHERE_API_KEY=cohere_example_key
+    volumes:
+      - ./coverage:/project/coverage
     depends_on:
-      - temporal
-      - mongo
-      - redis
+      temporal:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - temporal-network
 
   temporal:
     image: temporalio/auto-setup:1.25.2.0
     depends_on:
-      - temporal-postgresql
-      - qdrant-healthcheck
-      - mongo
-      - redis
+      temporal-postgresql:
+        condition: service_healthy
+      qdrant-healthcheck:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - DB=postgres12
       - DB_PORT=5432
