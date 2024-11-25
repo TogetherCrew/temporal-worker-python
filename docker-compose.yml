@@ -74,6 +74,8 @@ services:
       - 6333:6333
     volumes:
       - ./qdrant_data:/qdrant_data
+    networks:
+      - temporal-network
   qdrant-healthcheck:
     restart: always
     image: curlimages/curl:8.11.0
