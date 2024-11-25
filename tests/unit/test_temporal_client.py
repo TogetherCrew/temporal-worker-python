@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, AsyncMock
+from unittest.mock import AsyncMock, patch
 
 from temporalio.client import Client
 from utils.temporal_client import TemporalClient

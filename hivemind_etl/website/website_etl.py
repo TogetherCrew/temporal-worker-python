@@ -18,7 +18,7 @@ class WebsiteETL:
         """
         if not community_id or not isinstance(community_id, str):
             raise ValueError("community_id must be a non-empty string")
-        
+
         self.community_id = community_id
         collection_name = "website"
 
