@@ -18,10 +18,4 @@ WORKFLOWS = [
     SayHello,
 ]
 
-ACTIVITIES = [
-    get_communities,
-    extract_website,
-    transform_data,
-    load_data,
-    say_hello
-]
+ACTIVITIES = [get_communities, extract_website, transform_data, load_data, say_hello]

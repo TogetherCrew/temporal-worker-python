@@ -28,5 +28,6 @@ async def main():
     logging.info("Starting worker...")
     await worker.run()
 
+
 if __name__ == "__main__":
     asyncio.run(main())

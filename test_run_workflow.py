@@ -24,7 +24,6 @@ async def start_workflow():
 
     client = await TemporalClient().get_client()
 
-
     try:
         # Start a workflow
         # handle = await client.start_workflow(
@@ -41,7 +40,7 @@ async def start_workflow():
         handle = await client.create_schedule(
             id="website-ingestion-schedule",
             schedule=Schedule(
-            action=ScheduleActionStartWorkflow(
+                action=ScheduleActionStartWorkflow(
                     # "SayHello",
                     "WebsiteIngestionSchedulerWorkflow",
                     # id="schedules-say-hello",
@@ -56,66 +55,69 @@ async def start_workflow():
         )
 
         print(f"Started workflow {handle.id}")
-        
+
         # # Wait for the workflow to complete
         # result = await handle.result()
         # print("Workflow result:", result)
-        
+
         # # Query workflow state
         # state = await handle.query("getCurrentState")
         # print("Current state:", state)
-        
+
         # # Signal the workflow
         # await handle.signal("signalName", "signal parameter")
-        
+
         # Terminate workflow if needed
         # await handle.terminate("Termination reason")
-        
+
     except Exception as e:
         print(f"Error executing workflow: {e}")
+
 
 async def check_workflow_status(workflow_id: str):
     """Check the status of a specific workflow."""
     client = await TemporalClient().get_client()
-    
+
     try:
         handle = client.get_workflow_handle(workflow_id)
-        
+
         # Get workflow details
         desc = await handle.describe()
         print(f"Workflow status: {desc.status}")
         print(f"Start time: {desc.start_time}")
         print(f"Workflow type: {desc.workflow_type}")
-        
+
         # Check if workflow is running
         workflow_desc = await handle.describe()
         print(f"Description: {workflow_desc.status}")
-        
+
         return desc
-        
+
     except Exception as e:
         print(f"Error checking workflow status: {e}")
         raise
 
+
 async def list_workflows():
     """List all workflows of a specific type."""
     client = await TemporalClient().get_client()
-    
+
     try:
         workflows = client.list_workflows(
             query="WorkflowType = 'WebsiteIngestionSchedulerWorkflow'",
         )
-        
+
         async for workflow in workflows:
             print("Workflow ID:", workflow.id)
             print("Status:", workflow.status)
             print("Start Time:", workflow.start_time)
             print("Type:", workflow.workflow_type)
             print("-" * 50)
-            
+
     except Exception as e:
         print(f"Error listing workflows: {e}")
         raise
+
 
 async def main():
     """Main function to demonstrate workflow operations."""
@@ -124,9 +126,10 @@ async def main():
 
     # Check status of a specific workflow
     # await check_workflow_status("website-ingestion-schedule")
-    
+
     # List all workflows
     await list_workflows()
+
 
 if __name__ == "__main__":
     # Run the async main function

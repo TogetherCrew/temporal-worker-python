@@ -95,6 +95,7 @@ class WebsiteIngestionSchedulerWorkflow:
         # Wait for all child workflows to complete
         await asyncio.gather(*[handle for handle in child_workflows])
 
+
 # For test purposes
 # To be deleted in future
 @workflow.defn
@@ -103,6 +104,5 @@ class SayHello:
     async def run(self) -> int:
         logger.info(f"Hello at time {workflow.now()}!")
         return await workflow.start_activity(
-            say_hello,
-            start_to_close_timeout=timedelta(seconds=5)
+            say_hello, start_to_close_timeout=timedelta(seconds=5)
         )

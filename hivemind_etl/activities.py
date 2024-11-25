@@ -10,6 +10,7 @@ with workflow.unsafe.imports_passed_through():
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @activity.defn
 async def get_communities() -> list[dict[str, Any]]:
     """Fetch all communities that need to be processed."""
