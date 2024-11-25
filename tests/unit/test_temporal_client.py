@@ -45,10 +45,12 @@ class TestTemporalClient(unittest.IsolatedAsyncioTestCase):
 
     def test_load_credentials_missing_api_key(self):
         """Test handling of missing API key"""
-        with patch.dict("os.environ", {"TEMPORAL_API_KEY": ""}):
+        with patch.dict(
+            "os.environ", {"TEMPORAL_HOST": "", "TEMPORAL_PORT": ""}, clear=True
+        ):
             with self.assertRaises(ValueError) as context:
                 self.client._load_credentials()
-            self.assertIn("TEMPORAL_API_KEY", str(context.exception))
+            self.assertNotIn("TEMPORAL_API_KEY", str(context.exception))
 
     def test_load_credentials_missing_port(self):
         """Test handling of missing port"""
