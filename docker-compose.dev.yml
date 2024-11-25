@@ -120,10 +120,6 @@ services:
     networks:
       - temporal-network
 
-volumes:
-  data1:
-
-
 networks:
   temporal-network:
     driver: bridge
