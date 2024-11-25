@@ -7,19 +7,26 @@ services:
     env_file:
       - .env
     depends_on:
-      - temporal
-      - mongo
-      - redis
+      temporal:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - temporal-network
 
   temporal:
     image: temporalio/auto-setup:1.25.2.0
     depends_on:
-      - temporal-postgresql
-      - qdrant-healthcheck
-      - mongo
-      - redis
+      temporal-postgresql:
+        condition: service_healthy
+      qdrant-healthcheck:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - DB=postgres12
       - DB_PORT=5432
@@ -28,6 +35,11 @@ services:
       - POSTGRES_SEEDS=temporal-postgresql
     networks:
       - temporal-network
+    healthcheck:
+      test: ["CMD", "tctl", "--address", "temporal:7233", "workflow", "list"]
+      interval: 1s
+      timeout: 5s
+      retries: 30
     ports:
       - 7233:7233
 
@@ -53,7 +65,6 @@ services:
       retries: 5
     networks:
       - temporal-network
-
 
   mongo:
     image: "mongo:6.0.8"
