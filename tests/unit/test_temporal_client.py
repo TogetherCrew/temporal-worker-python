@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch, AsyncMock
-import os
+
 from temporalio.client import Client
-from utils.temporal_client import TemporalClient  # Replace with actual import path
+from utils.temporal_client import TemporalClient
 
 
 class TestTemporalClient(unittest.IsolatedAsyncioTestCase):

@@ -1,13 +1,11 @@
 ############ Script for showing how to set up a workflow #########
 
 
+import asyncio
 import os
 from datetime import timedelta
+
 from dotenv import load_dotenv
-
-import asyncio
-from utils.temporal_client import TemporalClient
-
 from temporalio.client import (
     Schedule,
     ScheduleActionStartWorkflow,
@@ -15,6 +13,7 @@ from temporalio.client import (
     ScheduleSpec,
     ScheduleState,
 )
+from utils.temporal_client import TemporalClient
 
 
 async def start_workflow():

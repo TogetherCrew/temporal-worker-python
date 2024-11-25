@@ -5,8 +5,8 @@ from tc_hivemind_backend.db.modules_base import ModulesBase
 
 class ModulesWebsite(ModulesBase):
     def __init__(self) -> None:
-        self.platform_name = "website"
         super().__init__()
+        self.platform_name = "website"
 
     def get_learning_platforms(
         self,

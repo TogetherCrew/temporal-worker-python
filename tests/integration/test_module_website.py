@@ -72,7 +72,9 @@ class TestQueryWebsiteModulesDB(unittest.TestCase):
 
     def test_get_website_communities_data_module_multiple_platforms(self):
         """
-        single website platform for one community
+        Test get_learning_platforms when a community has multiple platforms.
+        Verifies that only website platform data is returned even when
+        other platform types exist.
         """
         platform_id = ObjectId("6579c364f1120850414e0dc6")
         platform_id2 = ObjectId("6579c364f1120850414e0dc7")

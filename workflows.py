@@ -1,16 +1,16 @@
 import asyncio
 import logging
 from datetime import timedelta
-from temporalio.common import RetryPolicy
 
-from temporalio import workflow
 from hivemind_etl.activities import (
-    get_communities,
     extract_website,
-    transform_data,
+    get_communities,
     load_data,
     say_hello,
+    transform_data,
 )
+from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

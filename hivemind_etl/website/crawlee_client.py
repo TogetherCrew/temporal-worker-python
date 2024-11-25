@@ -71,7 +71,7 @@ class CrawleeClient:
                 if url and url.startswith(("http://", "https://")):
                     links.append(url)
         except ET.ParseError as e:
-            raise ValueError(f"Invalid sitemap XML: {str(e)}")
+            raise ValueError(f"Invalid sitemap XML: {str(e)}") from e
 
         return links
 
@@ -112,5 +112,5 @@ class CrawleeClient:
             await asyncio.wait_for(self.crawler.run(), timeout=3600)  # 1 hour timeout
             crawled_data = await self.crawler.get_data()
             return crawled_data.items
-        except asyncio.TimeoutError:
-            raise TimeoutError("Crawl operation timed out")
+        except asyncio.TimeoutError as e:
+            raise TimeoutError("Crawl operation timed out") from e

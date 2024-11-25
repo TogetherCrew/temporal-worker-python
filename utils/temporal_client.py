@@ -1,6 +1,6 @@
 import os
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 from temporalio.client import Client
 
 
@@ -33,7 +33,7 @@ class TemporalClient:
         host = os.getenv("TEMPORAL_HOST")
         api_key = os.getenv("TEMPORAL_API_KEY")
         port = os.getenv("TEMPORAL_PORT")
-
+ 
         if not host:
             raise ValueError(
                 "`TEMPORAL_HOST` is not configured right in env credentials!"

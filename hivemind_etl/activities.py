@@ -1,5 +1,6 @@
 import logging
 from typing import Any
+
 from temporalio import activity, workflow
 
 with workflow.unsafe.imports_passed_through():

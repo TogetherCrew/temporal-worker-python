@@ -1,12 +1,11 @@
+import asyncio
 import logging
 import os
-import asyncio
+
 from dotenv import load_dotenv
-
-from utils.temporal_client import TemporalClient
-from temporalio.worker import Worker
-
 from registry import ACTIVITIES, WORKFLOWS
+from temporalio.worker import Worker
+from utils.temporal_client import TemporalClient
 
 
 async def main():
@@ -16,6 +15,7 @@ async def main():
     if not task_queue:
         raise ValueError("`TEMPORAL_TASK_QUEUE` is not properly set!")
 
+    logging.info(f"Using task queue: {task_queue}")
     client = await TemporalClient().get_client()
 
     worker = Worker(

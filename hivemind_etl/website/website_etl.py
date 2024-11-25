@@ -1,8 +1,8 @@
 from typing import Any
 
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 from hivemind_etl.website.crawlee_client import CrawleeClient
 from llama_index.core import Document
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 
 class WebsiteETL:
@@ -16,6 +16,9 @@ class WebsiteETL:
         community_id : str
             the community to save its data
         """
+        if not community_id or not isinstance(community_id, str):
+            raise ValueError("community_id must be a non-empty string")
+        
         self.community_id = community_id
         collection_name = "website"
 
