@@ -57,7 +57,6 @@ async def load_data(documents: list[Document], community_id: str) -> None:
     """Load the transformed data into the database."""
     try:
         logger.info(f"Starting data load for community {community_id}")
-        logger.info(f"Showing 3 documents: {documents[:3]}")
         website_etl = WebsiteETL(community_id=community_id)
         website_etl.load(documents=documents)
         logger.info(f"Completed data load for community {community_id}")
