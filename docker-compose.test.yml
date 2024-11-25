@@ -59,6 +59,11 @@ services:
       - POSTGRES_SEEDS=temporal-postgresql
     networks:
       - temporal-network
+    healthcheck:
+      test: ["CMD", "tctl", "--address", "temporal:7233", "workflow", "list"]
+      interval: 1s
+      timeout: 5s
+      retries: 30
 
   temporal-ui:
     image: temporalio/ui:2.31.2
