@@ -1,5 +1,6 @@
 import logging
 import os
+import asyncio
 from dotenv import load_dotenv
 
 from utils.temporal_client import TemporalClient
@@ -26,3 +27,6 @@ async def main():
 
     logging.info("Starting worker...")
     await worker.run()
+
+if __name__ == "__main__":
+    asyncio.run(main())

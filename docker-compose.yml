@@ -8,8 +8,8 @@ services:
       - .env
     depends_on:
       - temporal
-      - temporal-mongo
-      - temporal-redis
+      - mongo
+      - redis
     networks:
       - temporal-network
 
@@ -18,8 +18,8 @@ services:
     depends_on:
       - temporal-postgresql
       - qdrant-healthcheck
-      - temporal-mongo
-      - temporal-redis
+      - mongo
+      - redis
     environment:
       - DB=postgres12
       - DB_PORT=5432
@@ -50,7 +50,7 @@ services:
       - temporal-network
 
 
-  temporal-mongo:
+  mongo:
     image: "mongo:6.0.8"
     ports:
       - 27018:27017
@@ -66,7 +66,7 @@ services:
     networks:
       - temporal-network
 
-  temporal-qdrant:
+  qdrant:
     image: qdrant/qdrant:v1.9.2
     restart: always
     container_name: qdrant
@@ -76,10 +76,10 @@ services:
       - ./qdrant_data:/qdrant_data
   qdrant-healthcheck:
     restart: always
-    image: curlimages/curl:latest
+    image: curlimages/curl:8.11.0
     entrypoint: ["/bin/sh", "-c", "--", "while true; do sleep 30; done;"]
     depends_on:
-      - temporal-qdrant
+      - qdrant
     healthcheck:
       test: ["CMD", "curl", "-f", "http://qdrant:6333/readyz"]
       interval: 10s
@@ -88,7 +88,7 @@ services:
     networks:
       - temporal-network
 
-  temporal-redis:
+  redis:
     image: redis:7.0.11
     restart: unless-stopped
     healthcheck:

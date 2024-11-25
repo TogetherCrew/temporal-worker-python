@@ -42,7 +42,7 @@ class TemporalClient:
             raise ValueError(
                 "`TEMPORAL_PORT` is not configured right in env credentials!"
             )
-        if not api_key:
+        if api_key is None:
             raise ValueError(
                 "`TEMPORAL_API_KEY` is not configured right in env credentials!"
             )

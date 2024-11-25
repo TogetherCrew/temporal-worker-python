@@ -6,3 +6,4 @@ crawlee[playwright]==0.3.8
 redis===5.0.4
 defusedxml==0.7.1
 temporalio==1.8.0
+pydantic==2.9.2
