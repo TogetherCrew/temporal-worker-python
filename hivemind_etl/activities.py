@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 from temporalio import activity, workflow
+from llama_index.core import Document
 
 with workflow.unsafe.imports_passed_through():
     from hivemind_etl.website.module import ModulesWebsite
@@ -38,7 +39,7 @@ async def extract_website(urls: list[str], community_id: str) -> list[dict]:
 
 
 @activity.defn
-async def transform_data(raw_data: list[dict], community_id: str) -> list[dict]:
+async def transform_data(raw_data: list[dict], community_id: str) -> list[Document]:
     """Transform the extracted raw data."""
     try:
         logger.info(f"Starting transformation for community {community_id}")
@@ -52,10 +53,11 @@ async def transform_data(raw_data: list[dict], community_id: str) -> list[dict]:
 
 
 @activity.defn
-async def load_data(documents: list[dict], community_id: str) -> None:
+async def load_data(documents: list[Document], community_id: str) -> None:
     """Load the transformed data into the database."""
     try:
         logger.info(f"Starting data load for community {community_id}")
+        logger.info(f"Showing 3 documents: {documents[:3]}")
         website_etl = WebsiteETL(community_id=community_id)
         website_etl.load(documents=documents)
         logger.info(f"Completed data load for community {community_id}")
