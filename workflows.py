@@ -69,13 +69,14 @@ class CommunityWebsiteWorkflow:
 @workflow.defn
 class WebsiteIngestionSchedulerWorkflow:
     @workflow.run
-    async def run(self) -> None:
+    async def run(self, platform_id: str | None = None) -> None:
         # Get all communities
         communities = await workflow.execute_activity(
             get_communities,
-            start_to_close_timeout=timedelta(minutes=5),
+            platform_id,
+            start_to_close_timeout=timedelta(minutes=20),
             retry_policy=RetryPolicy(
-                maximum_attempts=1,
+                maximum_attempts=3,
             ),
         )
 

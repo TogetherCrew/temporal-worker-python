@@ -10,9 +10,16 @@ class ModulesWebsite(ModulesBase):
 
     def get_learning_platforms(
         self,
+        filter_platform_id: str | None = None,
     ) -> list[dict[str, str | list[str]]]:
         """
         Get all the website communities with their page titles.
+
+        Parameters
+        -----------
+        filter_platform_id : str | None
+            A platform's community to be fetched
+            for default it is as `None` meaning to get all communities information
 
         Returns
         ---------
@@ -40,6 +47,10 @@ class ModulesWebsite(ModulesBase):
                     continue
 
                 platform_id = platform["platform"]
+
+                # if we needed to get specific platforms
+                if filter_platform_id and filter_platform_id != str(platform_id):
+                    continue
 
                 try:
                     website_links = self.get_platform_metadata(

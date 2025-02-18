@@ -45,9 +45,10 @@ async def start_workflow():
                     # id="schedules-say-hello",
                     id="schedules-website-ingestion",
                     task_queue=task_queue,
+                    args=["platform_id"],
                 ),
                 spec=ScheduleSpec(
-                    intervals=[ScheduleIntervalSpec(every=timedelta(hours=1))]
+                    intervals=[ScheduleIntervalSpec(every=timedelta(minutes=2))]
                 ),
                 state=ScheduleState(note="Here's a note on my Schedule."),
             ),
