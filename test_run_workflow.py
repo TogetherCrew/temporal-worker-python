@@ -6,6 +6,7 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
+from tc_temporal_backend.client import TemporalClient
 from temporalio.client import (
     Schedule,
     ScheduleActionStartWorkflow,
@@ -13,7 +14,6 @@ from temporalio.client import (
     ScheduleSpec,
     ScheduleState,
 )
-from tc_temporal_backend.client import TemporalClient
 
 
 async def start_workflow():
