@@ -13,7 +13,7 @@ from temporalio.client import (
     ScheduleSpec,
     ScheduleState,
 )
-from utils.temporal_client import TemporalClient
+from tc_temporal_backend.client import TemporalClient
 
 
 async def start_workflow():

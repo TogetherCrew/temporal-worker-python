@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from registry import ACTIVITIES, WORKFLOWS
 from temporalio.worker import Worker
-from utils.temporal_client import TemporalClient
+from tc_temporal_backend.client import TemporalClient
 
 
 async def main():
