@@ -13,10 +13,28 @@ logger = logging.getLogger(__name__)
 
 
 @activity.defn
-async def get_communities() -> list[dict[str, Any]]:
-    """Fetch all communities that need to be processed."""
+async def get_communities(platform_id: str | None = None) -> list[dict[str, Any]]:
+    """
+    Fetch all communities that need to be processed in case of no platform id given
+    Else, just process for one platform
+
+    Parameters
+    -----------
+    platform_id : str | None
+        A platform's community to be fetched
+        for default it is as `None` meaning to get all communities information
+
+    Returns
+    ---------
+    communities : list[dict[str, Any]]
+        a list of communities holding website informations
+    """
     try:
-        communities = ModulesWebsite().get_learning_platforms()
+        if platform_id:
+            logger.info("Website ingestion is filtered for a single community!")
+        communities = ModulesWebsite().get_learning_platforms(
+            filter_platform_id=platform_id
+        )
         logger.info(f"Found {len(communities)} communities to process")
         return communities
     except Exception as e:
