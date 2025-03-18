@@ -57,14 +57,14 @@ class ModulesWebsite(ModulesBase):
                         platform_id=platform_id,
                         metadata_name="resources",
                     )
-
-                    communities_data.append(
-                        {
-                            "community_id": str(community),
-                            "platform_id": str(platform_id),
-                            "urls": website_links,
-                        }
-                    )
+                    if platform["metadata"]["activated"]:
+                        communities_data.append(
+                            {
+                                "community_id": str(community),
+                                "platform_id": str(platform_id),
+                                "urls": website_links,
+                            }
+                        )
                 except Exception as exp:
                     logging.error(
                         "Exception while fetching website modules "
