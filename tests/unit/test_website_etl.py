@@ -34,7 +34,7 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
         extracted_data = await self.website_etl.extract(urls)
 
         self.assertEqual(extracted_data, mocked_data)
-        self.website_etl.crawlee_client.crawl.assert_awaited_once_with(urls)
+        self.website_etl.crawlee_client.crawl.assert_awaited_once_with(links=urls)
 
     def test_transform(self):
         """
