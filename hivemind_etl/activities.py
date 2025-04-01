@@ -36,6 +36,7 @@ async def get_communities(platform_id: str | None = None) -> list[dict[str, Any]
             filter_platform_id=platform_id
         )
         logger.info(f"Found {len(communities)} communities to process")
+        logging.info(f"communities: {communities}")
         return communities
     except Exception as e:
         logger.error(f"Error fetching communities: {str(e)}")
