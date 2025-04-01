@@ -52,7 +52,9 @@ class WebsiteETL:
         extracted_data = []
         for url in urls:
             logging.info(f"Crawling {url} and its routes!")
-            extracted_data.extend(await self.crawlee_client.crawl(links=[url]))
+            data = await self.crawlee_client.crawl(links=[url])
+            logging.info(f"{len(data)} data is extracted.")
+            extracted_data.extend(data)
 
         logging.info(f"Extracted {len(extracted_data)} documents!")
 
