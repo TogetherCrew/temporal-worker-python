@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from hivemind_etl.website.crawlee_client import CrawleeClient
@@ -47,7 +48,13 @@ class WebsiteETL:
         """
         if not urls:
             raise ValueError("No URLs provided for crawling")
-        extracted_data = await self.crawlee_client.crawl(urls)
+
+        extracted_data = []
+        for url in urls:
+            logging.info(f"Crawling {url} and its routes!")
+            extracted_data.extend(await self.crawlee_client.crawl(links=[url]))
+
+        logging.info(f"Extracted {len(extracted_data)} documents!")
 
         if not extracted_data:
             raise ValueError(f"No data extracted from URLs: {urls}")
