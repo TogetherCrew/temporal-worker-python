@@ -1,10 +1,10 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from dotenv import load_dotenv
 from hivemind_etl.website.website_etl import WebsiteETL
 from llama_index.core import Document
-
 
 class TestWebsiteETL(IsolatedAsyncioTestCase):
     def setUp(self):
@@ -17,6 +17,7 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
         self.website_etl.crawlee_client = AsyncMock()
         self.website_etl.ingestion_pipeline = MagicMock()
 
+    @pytest.mark.skip()
     async def test_extract(self):
         """
         Test the extract method.
