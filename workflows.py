@@ -34,18 +34,18 @@ class CommunityWebsiteWorkflow:
         raw_data = await workflow.execute_activity(
             extract_website,
             args=[urls, community_id],
-            start_to_close_timeout=timedelta(minutes=10),
+            start_to_close_timeout=timedelta(minutes=30),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=10),
                 maximum_interval=timedelta(minutes=5),
-                maximum_attempts=1,
+                maximum_attempts=3,
             ),
         )
 
         documents = await workflow.execute_activity(
             transform_data,
             args=[raw_data, community_id],
-            start_to_close_timeout=timedelta(minutes=5),
+            start_to_close_timeout=timedelta(minutes=10),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=5),
                 maximum_interval=timedelta(minutes=2),
@@ -56,11 +56,11 @@ class CommunityWebsiteWorkflow:
         await workflow.execute_activity(
             load_data,
             args=[documents, community_id],
-            start_to_close_timeout=timedelta(minutes=5),
+            start_to_close_timeout=timedelta(minutes=60),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=5),
                 maximum_interval=timedelta(minutes=2),
-                maximum_attempts=1,
+                maximum_attempts=3,
             ),
         )
 
@@ -74,7 +74,7 @@ class WebsiteIngestionSchedulerWorkflow:
         communities = await workflow.execute_activity(
             get_communities,
             platform_id,
-            start_to_close_timeout=timedelta(minutes=20),
+            start_to_close_timeout=timedelta(minutes=5),
             retry_policy=RetryPolicy(
                 maximum_attempts=3,
             ),
@@ -86,7 +86,7 @@ class WebsiteIngestionSchedulerWorkflow:
             child_handle = await workflow.start_child_workflow(
                 CommunityWebsiteWorkflow.run,
                 args=[community],
-                id=f"website-ingest-{community['community_id']}-{workflow.now().strftime('%Y%m%d%H%M')}",
+                id=f"website:ingestor:{community['community_id']}",
                 retry_policy=RetryPolicy(
                     maximum_attempts=1,
                 ),
