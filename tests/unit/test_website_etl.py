@@ -1,5 +1,5 @@
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from dotenv import load_dotenv
@@ -18,7 +18,6 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
         self.website_etl.crawlee_client = AsyncMock()
         self.website_etl.ingestion_pipeline = MagicMock()
 
-    @pytest.mark.skip()
     async def test_extract(self):
         """
         Test the extract method.
@@ -31,12 +30,18 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
                 "title": "Example",
             }
         ]
-        self.website_etl.crawlee_client.crawl.return_value = mocked_data
-
-        extracted_data = await self.website_etl.extract(urls)
-
-        self.assertEqual(extracted_data, mocked_data)
-        self.website_etl.crawlee_client.crawl.assert_awaited_once_with(links=urls)
+        
+        # Mock the CrawleeClient class instead of the instance
+        with patch('hivemind_etl.website.website_etl.CrawleeClient') as MockCrawleeClient:
+            mock_client_instance = AsyncMock()
+            mock_client_instance.crawl.return_value = mocked_data
+            MockCrawleeClient.return_value = mock_client_instance
+            
+            extracted_data = await self.website_etl.extract(urls)
+            
+            self.assertEqual(extracted_data, mocked_data)
+            MockCrawleeClient.assert_called_once()
+            mock_client_instance.crawl.assert_awaited_once_with(links=urls)
 
     def test_transform(self):
         """
