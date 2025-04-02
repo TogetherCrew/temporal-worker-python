@@ -24,7 +24,7 @@ class WebsiteETL:
         collection_name = "website"
 
         # preparing the data extractor and ingestion pipelines
-        self.crawlee_client = CrawleeClient()
+        # self.crawlee_client = CrawleeClient()
         self.ingestion_pipeline = CustomIngestionPipeline(
             self.community_id, collection_name=collection_name
         )
@@ -51,9 +51,10 @@ class WebsiteETL:
 
         extracted_data = []
         for url in urls:
+            crawlee_client = CrawleeClient()
             logging.info(f"Crawling {url} and its routes!")
-            data = await self.crawlee_client.crawl(links=[url])
-            logging.info(f"{len(data)} data is extracted.")
+            data = await crawlee_client.crawl(links=[url])
+            logging.info(f"{len(data)} data is extracted for route: {url}")
             extracted_data.extend(data)
 
         logging.info(f"Extracted {len(extracted_data)} documents!")
