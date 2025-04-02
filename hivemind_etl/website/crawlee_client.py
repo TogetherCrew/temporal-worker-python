@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any
+import uuid
 
 from crawlee.playwright_crawler import PlaywrightCrawler, PlaywrightCrawlingContext
 from defusedxml import ElementTree as ET
@@ -21,6 +22,12 @@ class CrawleeClient:
         # do not persist crawled data to local storage
         self.crawler._configuration.persist_storage = False
         self.crawler._configuration.write_metadata = False
+        self.crawler._configuration.purge_on_start = True
+
+        # changing the id each time so it wouldn't continue
+        # fetching the previous links
+        config = self.crawler._configuration.get_global_configuration()
+        config.default_request_queue_id = uuid.uuid4().hex
 
         @self.crawler.router.default_handler
         async def request_handler(context: PlaywrightCrawlingContext) -> None:
