@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from hivemind_etl.website.website_etl import WebsiteETL
 from llama_index.core import Document
 
+
 class TestWebsiteETL(IsolatedAsyncioTestCase):
     def setUp(self):
         """
