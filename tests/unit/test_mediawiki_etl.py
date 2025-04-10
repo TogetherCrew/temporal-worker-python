@@ -33,7 +33,7 @@ class TestMediawikiETL(unittest.TestCase):
         etl = MediawikiETL(
             community_id=self.community_id,
             namespaces=self.namespaces,
-            delete_dump_after_load=False
+            delete_dump_after_load=False,
         )
         self.assertFalse(etl.delete_dump_after_load)
 
@@ -147,7 +147,7 @@ class TestMediawikiETL(unittest.TestCase):
         etl = MediawikiETL(
             community_id=self.community_id,
             namespaces=self.namespaces,
-            delete_dump_after_load=False
+            delete_dump_after_load=False,
         )
         documents = [Document(text="Test content")]
 

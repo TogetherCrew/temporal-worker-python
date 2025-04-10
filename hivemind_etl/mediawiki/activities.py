@@ -40,7 +40,9 @@ async def get_hivemind_mediawiki_platforms(
     try:
         if platform_id:
             logging.info("MediaWiki ingestion is filtered for a single platform!")
-        platforms = ModulesMediaWiki().get_learning_platforms()
+        platforms = ModulesMediaWiki().get_learning_platforms(
+            platform_id_filter=platform_id
+        )
         logging.info(f"Found {len(platforms)} platforms to process")
         logging.info(f"platforms: {platforms}")
         return platforms
