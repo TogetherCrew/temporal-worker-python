@@ -11,6 +11,7 @@ class WikiteamCrawler:
         xml: bool = True,
         force: bool = True,
         curonly: bool = True,
+        namespaces: list[int] = [],
         **kwargs,
     ) -> None:
         self.community_id = community_id
@@ -18,6 +19,7 @@ class WikiteamCrawler:
         self.force = force
         self.curonly = curonly
         self.extra_params = kwargs
+        self.namespaces = namespaces
 
     def crawl(self, api_url: str, dump_path: str) -> None:
         """
@@ -44,7 +46,10 @@ class WikiteamCrawler:
         if self.force:
             params.append("--force")
         if self.curonly:
-            params.append("--curonly=true")
+            params.append("--curonly")
+        if self.namespaces:
+            params.append(f"--namespaces")
+            params.append(f"{','.join(map(str, self.namespaces))}")
 
         # Add any extra parameters passed during initialization
         for key, value in self.extra_params.items():

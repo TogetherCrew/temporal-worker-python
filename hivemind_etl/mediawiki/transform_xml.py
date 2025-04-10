@@ -1,10 +1,12 @@
 import logging
 import xml.etree.ElementTree as ET
+import os
+import glob
 
 from hivemind_etl.mediawiki.schema import Contributor, Page, Revision, SiteInfo
 
 
-def parse_mediawiki_xml(file_path: str) -> list[Page]:
+def parse_mediawiki_xml(file_dir: str) -> list[Page]:
     """Parse a MediaWiki XML dump file and extract page information.
 
     This function processes a MediaWiki XML dump file, extracting detailed information
@@ -13,8 +15,8 @@ def parse_mediawiki_xml(file_path: str) -> list[Page]:
 
     Parameters
     ----------
-    file_path : str
-        Path to the MediaWiki XML dump file to be parsed.
+    file_dir : str
+        Path to the directory containing the MediaWiki XML dump file to be parsed.
 
     Returns
     -------
@@ -26,7 +28,7 @@ def parse_mediawiki_xml(file_path: str) -> list[Page]:
 
     Examples
     --------
-    >>> pages = parse_mediawiki_xml("wiki_dump.xml")
+    >>> pages = parse_mediawiki_xml("wiki_dump_directory")
     >>> for page in pages:
     ...     print(f"Page: {page.title}")
     ...     if page.revision:
@@ -39,9 +41,19 @@ def parse_mediawiki_xml(file_path: str) -> list[Page]:
     - The text content retains XML escapes (e.g., &lt; for <)
     - The function logs the total number of pages processed
     """
+    # Find XML file in the directory
+    xml_files = glob.glob(os.path.join(file_dir, "*.xml"))
+    if not xml_files:
+        raise FileNotFoundError(f"No XML files found in directory: {file_dir}")
+
+    # Use the first XML file found
+    # there should be only one xml file in the directory (wikiteam3 crawler settings)
+    xml_file = xml_files[0]
+    logging.info(f"Found XML file: {xml_file}")
+
     namespaces = {"mw": "http://www.mediawiki.org/xml/export-0.11/"}
     # Parse the XML file
-    tree = ET.parse(file_path)
+    tree = ET.parse(xml_file)
     root = tree.getroot()
 
     # --- Extract Site Information ---

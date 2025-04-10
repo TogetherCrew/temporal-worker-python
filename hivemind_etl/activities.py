@@ -7,6 +7,12 @@ from hivemind_etl.website.activities import (
     transform_website_data,
     load_website_data,
 )
+from hivemind_etl.mediawiki.activities import (
+    get_hivemind_mediawiki_platforms,
+    extract_mediawiki,
+    transform_mediawiki_data,
+    load_mediawiki_data,
+)
 
 from temporalio import activity
 

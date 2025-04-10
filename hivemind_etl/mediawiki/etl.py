@@ -1,5 +1,5 @@
 import logging
-import os
+import shutil
 
 from llama_index.core import Document
 from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
@@ -8,23 +8,28 @@ from hivemind_etl.mediawiki.wikiteam_crawler import WikiteamCrawler
 
 
 class MediawikiETL:
-    def __init__(self, community_id: str, delete_dump_after_load: bool = True) -> None:
+    def __init__(
+        self,
+        community_id: str,
+        namespaces: list[int],
+        delete_dump_after_load: bool = True,
+    ) -> None:
         self.community_id = community_id
-        self.wikiteam_crawler = WikiteamCrawler(community_id)
+        self.wikiteam_crawler = WikiteamCrawler(community_id, namespaces=namespaces)
 
-        self.dump_path = f"dumps/{self.community_id}.xml"
+        self.dump_dir = f"dump_{self.community_id}"
         self.delete_dump_after_load = delete_dump_after_load
 
-    def extract(self, api_url: str, dump_path: str | None = None) -> None:
-        if dump_path is None:
-            dump_path = self.dump_path
+    def extract(self, api_url: str, dump_dir: str | None = None) -> None:
+        if dump_dir is None:
+            dump_dir = self.dump_dir
         else:
-            self.dump_path = dump_path
+            self.dump_dir = dump_dir
 
-        self.wikiteam_crawler.crawl(api_url, dump_path)
+        self.wikiteam_crawler.crawl(api_url, dump_dir)
 
     def transform(self) -> list[Document]:
-        pages = parse_mediawiki_xml(self.dump_path)
+        pages = parse_mediawiki_xml(file_dir=self.dump_dir)
 
         documents: list[Document] = []
         for page in pages:
@@ -77,4 +82,4 @@ class MediawikiETL:
         ingestion_pipeline.run_pipeline(documents)
 
         if self.delete_dump_after_load:
-            os.remove(self.dump_path)
+            shutil.rmtree(self.dump_dir)

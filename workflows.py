@@ -7,6 +7,9 @@ from hivemind_etl.website.workflows import (
     CommunityWebsiteWorkflow,
     WebsiteIngestionSchedulerWorkflow,
 )
+from hivemind_etl.mediawiki.workflows import (
+    MediaWikiETLWorkflow,
+)
 
 from temporalio import workflow
 
