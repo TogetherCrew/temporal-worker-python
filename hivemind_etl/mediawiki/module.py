@@ -10,9 +10,15 @@ class ModulesMediaWiki(ModulesBase):
 
     def get_learning_platforms(
         self,
+        platform_id_filter: str | None = None,
     ) -> list[dict[str, str | list[str]]]:
         """
         Get all the MediaWiki communities with their page titles.
+
+        Parameters
+        -----------
+        platform_id_filter : str | None
+            the platform id to filter the results for
 
         Returns
         ---------
@@ -40,6 +46,11 @@ class ModulesMediaWiki(ModulesBase):
                     continue
 
                 platform_id = platform["platform"]
+
+                if platform_id_filter is not None and platform_id_filter != str(
+                    platform_id
+                ):
+                    continue
 
                 try:
                     # TODO: retrieve baseURL and path in 1 db call
