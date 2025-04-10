@@ -1,9 +1,9 @@
 from hivemind_etl.activities import (
     extract_website,
-    get_communities,
-    load_data,
+    get_hivemind_website_comminities,
+    load_website_data,
     say_hello,
-    transform_data,
+    transform_website_data,
 )
 from workflows import (
     CommunityWebsiteWorkflow,
@@ -17,4 +17,10 @@ WORKFLOWS = [
     WebsiteIngestionSchedulerWorkflow,
 ]
 
-ACTIVITIES = [get_communities, extract_website, transform_data, load_data, say_hello]
+ACTIVITIES = [
+    get_hivemind_website_comminities,
+    extract_website,
+    transform_website_data,
+    load_website_data,
+    say_hello,
+]
