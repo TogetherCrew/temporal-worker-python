@@ -8,3 +8,4 @@ defusedxml==0.7.1
 pydantic==2.9.2
 motor>=3.6, <4.0.0
 tc-temporal-backend==1.0.0
+wikiteam3==4.4.1

@@ -162,3 +162,7 @@ cython_debug/
 #.idea/
 
 main.ipynb
+
+*.xml
+
+dump_*
