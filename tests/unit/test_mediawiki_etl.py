@@ -1,6 +1,7 @@
 import os
 import unittest
 from unittest.mock import Mock, patch
+import shutil
 
 from llama_index.core import Document
 from hivemind_etl.mediawiki.etl import MediawikiETL
@@ -10,53 +11,58 @@ class TestMediawikiETL(unittest.TestCase):
     def setUp(self):
         self.community_id = "test_community"
         self.api_url = "https://example.com/api.php"
-        self.custom_path = "custom/path/dump.xml"
+        self.custom_path = "custom/path"
+        self.namespaces = [0, 1]  # Main and Talk namespaces
 
         # Create a temporary dumps directory
-        os.makedirs("dumps", exist_ok=True)
+        os.makedirs(f"dump_{self.community_id}", exist_ok=True)
 
     def tearDown(self):
         # Clean up any created files
-        if os.path.exists("dumps"):
-            for file in os.listdir("dumps"):
-                os.remove(os.path.join("dumps", file))
-            os.rmdir("dumps")
+        if os.path.exists(f"dump_{self.community_id}"):
+            shutil.rmtree(f"dump_{self.community_id}")
+        if os.path.exists(self.custom_path):
+            shutil.rmtree(self.custom_path)
 
     def test_mediawiki_etl_initialization(self):
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
         self.assertEqual(etl.community_id, self.community_id)
         self.assertTrue(etl.delete_dump_after_load)
-        self.assertEqual(etl.dump_path, f"dumps/{self.community_id}.xml")
+        self.assertEqual(etl.dump_dir, f"dump_{self.community_id}")
 
-        etl = MediawikiETL(community_id=self.community_id, delete_dump_after_load=False)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            delete_dump_after_load=False
+        )
         self.assertFalse(etl.delete_dump_after_load)
 
     def test_extract_with_default_path(self):
         # Create a ETL instance with mocked wikiteam_crawler
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
         etl.wikiteam_crawler = Mock()
 
         etl.extract(self.api_url)
 
         etl.wikiteam_crawler.crawl.assert_called_once_with(
-            self.api_url, f"dumps/{self.community_id}.xml"
+            self.api_url, f"dump_{self.community_id}"
         )
 
     def test_extract_with_custom_path(self):
         # Create a ETL instance with mocked wikiteam_crawler
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
         etl.wikiteam_crawler = Mock()
 
         etl.extract(self.api_url, self.custom_path)
 
-        self.assertEqual(etl.dump_path, self.custom_path)
+        self.assertEqual(etl.dump_dir, self.custom_path)
         etl.wikiteam_crawler.crawl.assert_called_once_with(
             self.api_url, self.custom_path
         )
 
     @patch("hivemind_etl.mediawiki.etl.parse_mediawiki_xml")
     def test_transform_success(self, mock_parse_mediawiki_xml):
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
 
         # Mock page data
         mock_page = Mock()
@@ -91,7 +97,7 @@ class TestMediawikiETL(unittest.TestCase):
     @patch("hivemind_etl.mediawiki.etl.logging")
     @patch("hivemind_etl.mediawiki.etl.parse_mediawiki_xml")
     def test_transform_error_handling(self, mock_parse_mediawiki_xml, mock_logging):
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
 
         # Mock page that will raise an exception
         mock_page = Mock()
@@ -115,15 +121,16 @@ class TestMediawikiETL(unittest.TestCase):
 
     @patch("hivemind_etl.mediawiki.etl.CustomIngestionPipeline")
     def test_load_with_dump_deletion(self, mock_ingestion_pipeline_class):
-        etl = MediawikiETL(community_id=self.community_id)
+        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
         documents = [Document(text="Test content")]
 
         # Setup the mock
         mock_pipeline = Mock()
         mock_ingestion_pipeline_class.return_value = mock_pipeline
 
-        # Create a temporary dump file
-        with open(etl.dump_path, "w") as f:
+        # Create a temporary dump directory
+        os.makedirs(etl.dump_dir, exist_ok=True)
+        with open(os.path.join(etl.dump_dir, "test.xml"), "w") as f:
             f.write("test content")
 
         etl.load(documents)
@@ -133,19 +140,24 @@ class TestMediawikiETL(unittest.TestCase):
             self.community_id, collection_name="mediawiki"
         )
         mock_pipeline.run_pipeline.assert_called_once_with(documents)
-        self.assertFalse(os.path.exists(etl.dump_path))
+        self.assertFalse(os.path.exists(etl.dump_dir))
 
     @patch("hivemind_etl.mediawiki.etl.CustomIngestionPipeline")
     def test_load_without_dump_deletion(self, mock_ingestion_pipeline_class):
-        etl = MediawikiETL(community_id=self.community_id, delete_dump_after_load=False)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            delete_dump_after_load=False
+        )
         documents = [Document(text="Test content")]
 
         # Setup the mock
         mock_pipeline = Mock()
         mock_ingestion_pipeline_class.return_value = mock_pipeline
 
-        # Create a temporary dump file
-        with open(etl.dump_path, "w") as f:
+        # Create a temporary dump directory
+        os.makedirs(etl.dump_dir, exist_ok=True)
+        with open(os.path.join(etl.dump_dir, "test.xml"), "w") as f:
             f.write("test content")
 
         etl.load(documents)
@@ -155,8 +167,4 @@ class TestMediawikiETL(unittest.TestCase):
             self.community_id, collection_name="mediawiki"
         )
         mock_pipeline.run_pipeline.assert_called_once_with(documents)
-        self.assertTrue(os.path.exists(etl.dump_path))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertTrue(os.path.exists(etl.dump_dir))
