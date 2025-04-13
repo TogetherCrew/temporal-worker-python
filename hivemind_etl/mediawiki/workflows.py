@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
     from hivemind_etl.mediawiki.activities import (
@@ -31,6 +32,10 @@ class MediaWikiETLWorkflow:
                 get_hivemind_mediawiki_platforms,
                 platform_id,
                 start_to_close_timeout=timedelta(minutes=1),
+                retry_policy=RetryPolicy(
+                    initial_interval=timedelta(minutes=1),
+                    maximum_attempts=3,
+                ),
             )
 
             for platform in platforms:
@@ -45,6 +50,10 @@ class MediaWikiETLWorkflow:
                         extract_mediawiki,
                         mediawiki_platform,
                         start_to_close_timeout=timedelta(days=5),
+                        retry_policy=RetryPolicy(
+                            initial_interval=timedelta(minutes=1),
+                            maximum_attempts=3,
+                        ),
                     )
 
                     # Transform the extracted data
@@ -52,6 +61,10 @@ class MediaWikiETLWorkflow:
                         transform_mediawiki_data,
                         platform["community_id"],
                         start_to_close_timeout=timedelta(minutes=30),
+                        retry_policy=RetryPolicy(
+                            initial_interval=timedelta(minutes=1),
+                            maximum_attempts=3,
+                        ),
                     )
 
                     # Load the transformed data
@@ -60,6 +73,10 @@ class MediaWikiETLWorkflow:
                         documents,
                         platform["community_id"],
                         start_to_close_timeout=timedelta(minutes=30),
+                        retry_policy=RetryPolicy(
+                            initial_interval=timedelta(minutes=1),
+                            maximum_attempts=3,
+                        ),
                     )
 
                     logging.info(
