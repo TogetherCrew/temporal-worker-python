@@ -59,6 +59,9 @@ class WikiteamCrawler:
             else:
                 params.extend([f"--{key}", str(value)])
 
+        logging.info(f"Crawling mediawiki dump from {api_url} to {dump_path}")
+        logging.info(f"Parameters: {params}")
+
         # Directly call the DumpGenerator static __init__ method which will parse these parameters,
         # execute the dump generation process, and run through the rest of the workflow.
         DumpGenerator(params)
