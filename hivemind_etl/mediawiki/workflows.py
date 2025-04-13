@@ -44,7 +44,7 @@ class MediaWikiETLWorkflow:
                     await workflow.execute_activity(
                         extract_mediawiki,
                         mediawiki_platform,
-                        start_to_close_timeout=timedelta(days=2),
+                        start_to_close_timeout=timedelta(days=5),
                     )
 
                     # Transform the extracted data
