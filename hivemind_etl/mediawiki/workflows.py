@@ -59,7 +59,7 @@ class MediaWikiETLWorkflow:
                     # Transform the extracted data
                     documents = await workflow.execute_activity(
                         transform_mediawiki_data,
-                        platform["community_id"],
+                        mediawiki_platform,
                         start_to_close_timeout=timedelta(minutes=30),
                         retry_policy=RetryPolicy(
                             initial_interval=timedelta(minutes=1),
@@ -67,11 +67,11 @@ class MediaWikiETLWorkflow:
                         ),
                     )
 
+                    mediawiki_platform["documents"] = documents
                     # Load the transformed data
                     await workflow.execute_activity(
                         load_mediawiki_data,
-                        documents,
-                        platform["community_id"],
+                        mediawiki_platform,
                         start_to_close_timeout=timedelta(minutes=30),
                         retry_policy=RetryPolicy(
                             initial_interval=timedelta(minutes=1),
