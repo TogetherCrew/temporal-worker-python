@@ -12,6 +12,7 @@ class WikiteamCrawler:
         force: bool = True,
         curonly: bool = True,
         namespaces: list[int] = [],
+        proxy_url: str = "",
         **kwargs,
     ) -> None:
         self.community_id = community_id
@@ -20,6 +21,7 @@ class WikiteamCrawler:
         self.curonly = curonly
         self.extra_params = kwargs
         self.namespaces = namespaces
+        self.proxy_url = proxy_url
 
     def crawl(self, api_url: str, dump_path: str) -> None:
         """
@@ -50,6 +52,9 @@ class WikiteamCrawler:
         if self.namespaces:
             params.append(f"--namespaces")
             params.append(f"{','.join(map(str, self.namespaces))}")
+        if self.proxy_url:
+            params.append(f"--proxy")
+            params.append(self.proxy_url)
 
         # Add any extra parameters passed during initialization
         for key, value in self.extra_params.items():
