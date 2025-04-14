@@ -17,7 +17,7 @@ class MediawikiETL:
     ) -> None:
         self.community_id = community_id
 
-        self.proxy_url = os.getenv("MEDIAWIKI_PROXY_URL", "")
+        self.proxy_url = os.getenv("PROXY_URL", "")
         if self.proxy_url:
             logging.info(f"Proxy is set to be used!")
 
