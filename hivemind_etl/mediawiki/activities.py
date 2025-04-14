@@ -72,7 +72,9 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
 
 
 @activity.defn
-async def transform_mediawiki_data(mediawiki_platform: dict[str, Any]) -> list[Document]:
+async def transform_mediawiki_data(
+    mediawiki_platform: dict[str, Any],
+) -> list[Document]:
     """Transform the extracted MediaWiki data."""
 
     community_id = mediawiki_platform["community_id"]
@@ -93,11 +95,12 @@ async def transform_mediawiki_data(mediawiki_platform: dict[str, Any]) -> list[D
 async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
     """Load the transformed MediaWiki data into the database."""
     community_id = mediawiki_platform["community_id"]
+    namespaces = mediawiki_platform["namespaces"]
     try:
         documents = mediawiki_platform["documents"]
 
         logging.info(f"Starting data load for community {community_id}")
-        mediawiki_etl = MediawikiETL(community_id=community_id)
+        mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
         mediawiki_etl.load(documents=documents)
         logging.info(f"Completed data load for community {community_id}")
     except Exception as e:
