@@ -72,11 +72,15 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
 
 
 @activity.defn
-async def transform_mediawiki_data(community_id: str) -> list[Document]:
+async def transform_mediawiki_data(mediawiki_platform: str) -> list[Document]:
     """Transform the extracted MediaWiki data."""
+
+    community_id = mediawiki_platform["community_id"]
     try:
+        namespaces = mediawiki_platform["namespaces"]
+
         logging.info(f"Starting transformation for community {community_id}")
-        mediawiki_etl = MediawikiETL(community_id=community_id)
+        mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
         result = mediawiki_etl.transform()
         logging.info(f"Completed transformation for community {community_id}")
         return result
@@ -86,9 +90,12 @@ async def transform_mediawiki_data(community_id: str) -> list[Document]:
 
 
 @activity.defn
-async def load_mediawiki_data(documents: list[Document], community_id: str) -> None:
+async def load_mediawiki_data(mediawiki_platform: str) -> None:
     """Load the transformed MediaWiki data into the database."""
+    community_id = mediawiki_platform["community_id"]
     try:
+        documents = mediawiki_platform["documents"]
+
         logging.info(f"Starting data load for community {community_id}")
         mediawiki_etl = MediawikiETL(community_id=community_id)
         mediawiki_etl.load(documents=documents)
