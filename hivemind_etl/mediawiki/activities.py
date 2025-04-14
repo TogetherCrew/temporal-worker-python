@@ -72,7 +72,7 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
 
 
 @activity.defn
-async def transform_mediawiki_data(mediawiki_platform: str) -> list[Document]:
+async def transform_mediawiki_data(mediawiki_platform: dict[str, Any]) -> list[Document]:
     """Transform the extracted MediaWiki data."""
 
     community_id = mediawiki_platform["community_id"]
@@ -90,7 +90,7 @@ async def transform_mediawiki_data(mediawiki_platform: str) -> list[Document]:
 
 
 @activity.defn
-async def load_mediawiki_data(mediawiki_platform: str) -> None:
+async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
     """Load the transformed MediaWiki data into the database."""
     community_id = mediawiki_platform["community_id"]
     try:
