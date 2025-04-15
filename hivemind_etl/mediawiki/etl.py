@@ -34,7 +34,14 @@ class MediawikiETL:
         else:
             self.dump_dir = dump_dir
 
-        self.wikiteam_crawler.crawl(api_url, dump_dir)
+        try:
+            self.wikiteam_crawler.crawl(api_url, dump_dir)
+        except Exception as e:
+            logging.error(f"Error crawling {api_url}: {e}")
+            logging.warning("Removing incomplete dumped data if available!")
+            if os.path.exists(dump_dir):
+                shutil.rmtree(dump_dir)
+            raise e
 
     def transform(self) -> list[Document]:
         pages = parse_mediawiki_xml(file_dir=self.dump_dir)
