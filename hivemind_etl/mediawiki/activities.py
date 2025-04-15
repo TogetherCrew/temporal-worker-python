@@ -96,8 +96,11 @@ async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
     """Load the transformed MediaWiki data into the database."""
     community_id = mediawiki_platform["community_id"]
     namespaces = mediawiki_platform["namespaces"]
+
     try:
-        documents = mediawiki_platform["documents"]
+        documents_dict = mediawiki_platform["documents"]
+        # temporal had converted them to dicts, so we need to convert them back to Document objects
+        documents = [Document.from_dict(doc) for doc in documents_dict]
 
         logging.info(f"Starting data load for community {community_id}")
         mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
