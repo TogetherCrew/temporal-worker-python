@@ -15,12 +15,13 @@ class TestMediawikiETL(unittest.TestCase):
         self.namespaces = [0, 1]  # Main and Talk namespaces
 
         # Create a temporary dumps directory
-        os.makedirs(f"dump_{self.community_id}", exist_ok=True)
+        os.makedirs("dumps", exist_ok=True)
+        os.makedirs(f"dumps/{self.community_id}", exist_ok=True)
 
     def tearDown(self):
         # Clean up any created files
-        if os.path.exists(f"dump_{self.community_id}"):
-            shutil.rmtree(f"dump_{self.community_id}")
+        if os.path.exists(f"dumps/{self.community_id}"):
+            shutil.rmtree(f"dumps/{self.community_id}")
         if os.path.exists(self.custom_path):
             shutil.rmtree(self.custom_path)
 
@@ -28,7 +29,7 @@ class TestMediawikiETL(unittest.TestCase):
         etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
         self.assertEqual(etl.community_id, self.community_id)
         self.assertTrue(etl.delete_dump_after_load)
-        self.assertEqual(etl.dump_dir, f"dump_{self.community_id}")
+        self.assertEqual(etl.dump_dir, f"dumps/{self.community_id}")
 
         etl = MediawikiETL(
             community_id=self.community_id,
@@ -45,7 +46,7 @@ class TestMediawikiETL(unittest.TestCase):
         etl.extract(self.api_url)
 
         etl.wikiteam_crawler.crawl.assert_called_once_with(
-            self.api_url, f"dump_{self.community_id}"
+            self.api_url, f"dumps/{self.community_id}"
         )
 
     def test_extract_with_custom_path(self):

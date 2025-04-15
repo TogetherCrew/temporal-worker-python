@@ -25,7 +25,7 @@ class MediawikiETL:
             community_id, namespaces=namespaces, proxy_url=self.proxy_url
         )
 
-        self.dump_dir = f"dump_{self.community_id}"
+        self.dump_dir = f"dumps/{self.community_id}"
         self.delete_dump_after_load = delete_dump_after_load
 
     def extract(self, api_url: str, dump_dir: str | None = None) -> None:
