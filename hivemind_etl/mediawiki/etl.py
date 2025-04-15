@@ -42,9 +42,11 @@ class MediawikiETL:
         documents: list[Document] = []
         for page in pages:
             try:
+                # Generate a ref_doc_id if needed for newer llama-index versions
+                doc_id = page.page_id
                 documents.append(
                     Document(
-                        doc_id=page.page_id,
+                        doc_id=doc_id,
                         text=page.revision.text,
                         metadata={
                             "title": page.title,
@@ -57,6 +59,7 @@ class MediawikiETL:
                             "contributor_user_id": page.revision.contributor.user_id,
                             "sha1": page.revision.sha1,
                             "model": page.revision.model,
+                            "ref_doc_id": doc_id,  # Add ref_doc_id to metadata
                         },
                         excluded_embed_metadata_keys=[
                             "namespace",
