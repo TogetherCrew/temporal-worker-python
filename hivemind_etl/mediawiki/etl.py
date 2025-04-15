@@ -94,10 +94,13 @@ class MediawikiETL:
         return documents
 
     def load(self, documents: list[Document]) -> None:
+        logging.info(f"Loading {len(documents)} documents into Qdrant!")
         ingestion_pipeline = CustomIngestionPipeline(
             self.community_id, collection_name="mediawiki"
         )
         ingestion_pipeline.run_pipeline(documents)
+        logging.info(f"Loaded {len(documents)} documents into Qdrant!")
 
         if self.delete_dump_after_load:
+            logging.info(f"Removing dump directory {self.dump_dir}!")
             shutil.rmtree(self.dump_dir)
