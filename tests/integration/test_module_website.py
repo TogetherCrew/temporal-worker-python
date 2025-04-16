@@ -54,6 +54,7 @@ class TestQueryWebsiteModulesDB(unittest.TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -115,6 +116,7 @@ class TestQueryWebsiteModulesDB(unittest.TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -191,6 +193,7 @@ class TestQueryWebsiteModulesDB(unittest.TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -269,6 +272,7 @@ class TestQueryWebsiteModulesDB(unittest.TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
