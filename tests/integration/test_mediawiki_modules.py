@@ -53,6 +53,7 @@ class TestGetMediaWikiModules(TestCase):
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -97,6 +98,7 @@ class TestGetMediaWikiModules(TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -185,6 +187,7 @@ class TestGetMediaWikiModules(TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -267,6 +270,7 @@ class TestGetMediaWikiModules(TestCase):
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
