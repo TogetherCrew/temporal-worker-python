@@ -48,11 +48,12 @@ class TestGetMediaWikiModules(TestCase):
                             "platform": platform_id,
                             "name": "mediaWiki",
                             "metadata": {
-                                "namespaces": [0, 1, 2],
+                                "activated": True,
                             },
                         }
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -85,18 +86,19 @@ class TestGetMediaWikiModules(TestCase):
                             "platform": platform_id1,
                             "name": "mediaWiki",
                             "metadata": {
-                                "namespaces": [0, 1, 2],
+                                "activated": True,
                             },
                         },
                         {
                             "platform": platform_id2,
                             "name": "mediaWiki",
                             "metadata": {
-                                "namespaces": [3, 4, 5],
+                                "activated": True,
                             },
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -107,6 +109,7 @@ class TestGetMediaWikiModules(TestCase):
                 "metadata": {
                     "baseURL": "http://example1.com",
                     "path": "/api",
+                    "namespaces": [0, 1, 2],
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -123,6 +126,7 @@ class TestGetMediaWikiModules(TestCase):
                 "metadata": {
                     "baseURL": "http://example2.com",
                     "path": "/api",
+                    "namespaces": [3, 4, 5],
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -171,18 +175,19 @@ class TestGetMediaWikiModules(TestCase):
                             "platform": platform_id1,
                             "name": "mediaWiki",
                             "metadata": {
-                                "namespaces": [0, 1, 2],
+                                "activated": True,
                             },
                         },
                         {
                             "platform": platform_id2,
                             "name": "mediaWiki",
                             "metadata": {
-                                "namespaces": [3, 4, 5],
+                                "activated": True,
                             },
                         },
                     ]
                 },
+                "activated": True,
             }
         )
 
@@ -193,6 +198,7 @@ class TestGetMediaWikiModules(TestCase):
                 "metadata": {
                     "baseURL": "http://example1.com",
                     "path": "/api",
+                    "namespaces": [0, 1, 2],
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -209,6 +215,7 @@ class TestGetMediaWikiModules(TestCase):
                 "metadata": {
                     "baseURL": "http://example2.com",
                     "path": "/api",
+                    "namespaces": [3, 4, 5],
                 },
                 "community": community_id,
                 "disconnectedAt": None,
@@ -230,5 +237,86 @@ class TestGetMediaWikiModules(TestCase):
                 "community_id": str(community_id),
                 "namespaces": [0, 1, 2],
                 "base_url": "http://example1.com/api",
+            },
+        )
+
+    def test_get_mediawiki_communities_data_filtered_platforms_not_activated(self):
+        """
+        Two mediawiki platforms for one community
+        """
+        platform_id1 = ObjectId("6579c364f1120850414e0dc6")
+        platform_id2 = ObjectId("6579c364f1120850414e0dc7")
+        community_id = ObjectId("1009c364f1120850414e0dc5")
+
+        self.client["Core"]["modules"].insert_one(
+            {
+                "name": "hivemind",
+                "community": community_id,
+                "options": {
+                    "platforms": [
+                        {
+                            "platform": platform_id1,
+                            "name": "mediaWiki",
+                            "metadata": {
+                                "activated": False,
+                            },
+                        },
+                        {
+                            "platform": platform_id2,
+                            "name": "mediaWiki",
+                            "metadata": {
+                                "activated": True,
+                            },
+                        },
+                    ]
+                },
+                "activated": True,
+            }
+        )
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id1,
+                "name": "mediaWiki",
+                "metadata": {
+                    "baseURL": "http://example1.com",
+                    "path": "/api",
+                    "namespaces": [0, 1, 2],
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+
+        self.client["Core"]["platforms"].insert_one(
+            {
+                "_id": platform_id2,
+                "name": "mediaWiki",
+                "metadata": {
+                    "baseURL": "http://example2.com",
+                    "path": "/api",
+                    "namespaces": [3, 4, 5],
+                },
+                "community": community_id,
+                "disconnectedAt": None,
+                "connectedAt": datetime.now(),
+                "createdAt": datetime.now(),
+                "updatedAt": datetime.now(),
+            }
+        )
+
+        result = self.modules_mediawiki.get_learning_platforms()
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(
+            result[0],
+            {
+                "community_id": str(community_id),
+                "namespaces": [3, 4, 5],
+                "base_url": "http://example2.com/api",
             },
         )

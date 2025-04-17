@@ -62,16 +62,26 @@ class ModulesMediaWiki(ModulesBase):
                         platform_id=platform_id,
                         metadata_name="path",
                     )
+                    namespaces = self.get_platform_metadata(
+                        platform_id=platform_id,
+                        metadata_name="namespaces",
+                    )
 
                     if not isinstance(path, str) and not isinstance(base_url, str):
                         raise ValueError("Wrong format for `path` and `base_url`!")
 
                     modules_options = platform["metadata"]
-                    namespaces = modules_options.get("namespaces", [])
+                    activated = modules_options["activated"]
+
+                    if not activated:
+                        logging.warning(
+                            f"Platform: {platform_id} is not activated! Skipping it..."
+                        )
+                        continue
 
                     if not namespaces:
                         logging.warning(
-                            f"No namespaces found for platform: {platform_id}"
+                            f"No namespaces found for platform: {platform_id}. Skipping it..."
                         )
                         continue
 
