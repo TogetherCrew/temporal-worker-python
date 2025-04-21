@@ -10,6 +10,7 @@ from hivemind_etl.website.workflows import (
 from hivemind_etl.mediawiki.workflows import (
     MediaWikiETLWorkflow,
 )
+from hivemind_summarizer.workflows import TelegramSummariesWorkflow
 
 from temporalio import workflow
 

@@ -9,11 +9,17 @@ from hivemind_etl.activities import (
     transform_mediawiki_data,
     load_mediawiki_data,
 )
+from hivemind_summarizer.activities import (
+    fetch_telegram_summaries_by_date,
+    fetch_telegram_summaries_by_date_range,
+    get_collection_name,
+)
 from workflows import (
     CommunityWebsiteWorkflow,
     SayHello,
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
+    TelegramSummariesWorkflow,
 )
 
 WORKFLOWS = [
@@ -21,6 +27,7 @@ WORKFLOWS = [
     SayHello,
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
+    TelegramSummariesWorkflow,
 ]
 
 ACTIVITIES = [
@@ -33,4 +40,7 @@ ACTIVITIES = [
     transform_mediawiki_data,
     load_mediawiki_data,
     say_hello,
+    fetch_telegram_summaries_by_date,
+    fetch_telegram_summaries_by_date_range,
+    get_collection_name,
 ]
