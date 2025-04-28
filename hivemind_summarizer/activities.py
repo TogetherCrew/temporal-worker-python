@@ -216,7 +216,7 @@ async def fetch_telegram_summaries_by_date_range(
     Parameters
     ----------
     input : TelegramSummariesRangeActivityInput
-        Input object containing start_date, end_date, collection_name and extract_text_only
+        Input object containing start_date, end_date, platform_name and community_id
 
     Returns
     -------
@@ -226,15 +226,15 @@ async def fetch_telegram_summaries_by_date_range(
     Raises
     ------
     ValueError
-        If end_date is before start_date or collection_name is not provided
+        If end_date is before start_date or platform_name is not provided
     """
     start_date = input.start_date
     end_date = input.end_date
     extract_text_only = input.extract_text_only
-    collection_name = input.collection_name
+    platform_name = input.platform_name
     community_id = input.community_id
-    if not collection_name:
-        raise ValueError("Collection name is required but was not provided")
+    if not platform_name:
+        raise ValueError("Platform name is required but was not provided")
 
     logging.info(
         f"Fetching summaries for date range: {start_date} to {end_date} from collection: {collection_name}"
