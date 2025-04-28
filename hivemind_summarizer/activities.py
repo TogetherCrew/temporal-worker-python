@@ -6,9 +6,11 @@ from datetime import datetime, timedelta
 from bson import ObjectId
 from tc_hivemind_backend.db.qdrant import QdrantSingleton
 from tc_hivemind_backend.db.mongo import MongoSingleton
+from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
 
 from temporalio import activity, workflow
 from qdrant_client.models import Filter, FieldCondition, MatchValue
+from qdrant_client.http import models
 
 with workflow.unsafe.imports_passed_through():
     from hivemind_summarizer.schema import (
@@ -40,7 +42,7 @@ def extract_summary_text(node_content: dict[str, Any]) -> str:
 
 
 @activity.defn
-async def get_collection_name(input: TelegramGetCollectionNameInput) -> str:
+async def get_platform_name(input: TelegramGetCollectionNameInput) -> str:
     """
     Activity that extracts collection name from MongoDB based on platform_id and community_id.
 
@@ -52,7 +54,7 @@ async def get_collection_name(input: TelegramGetCollectionNameInput) -> str:
     Returns
     -------
     str
-        The collection name in format [communityId]_[platformName]_summary
+        The platform name
 
     Raises
     ------
@@ -83,11 +85,7 @@ async def get_collection_name(input: TelegramGetCollectionNameInput) -> str:
         if not platform_name:
             raise Exception(f"Platform name not found for platform_id {platform_id}")
 
-        # Construct collection name
-        collection_name = f"{community_id}_{platform_name}_summary"
-
-        logging.info(f"Generated collection name: {collection_name}")
-        return collection_name
+        return platform_name
 
     except Exception as e:
         logging.error(f"Error getting collection name: {str(e)}")
@@ -113,11 +111,13 @@ async def fetch_telegram_summaries_by_date(
     """
     date = input.date
     extract_text_only = input.extract_text_only
-    collection_name = input.collection_name
+    collection_name = f"{input.community_id}_{input.platform_name}_summary"
+    community_id = input.community_id
 
     logging.info("Started fetch_telegram_summaries_by_date!")
-    if not collection_name:
-        raise ValueError("Collection name is required but was not provided")
+
+    if not input.platform_name:
+        raise ValueError("Platform name is required but was not provided")
 
     logging.info(
         f"Fetching summaries for date: {date} from collection: {collection_name}"
@@ -128,19 +128,46 @@ async def fetch_telegram_summaries_by_date(
         qdrant_client = QdrantSingleton.get_instance().get_client()
 
         # Create filter for the specified date
-        filter_conditions = [FieldCondition(key="date", match=MatchValue(value=date))]
+        if date is not None:
+            filter_conditions = [
+                FieldCondition(key="date", match=MatchValue(value=date))
+            ]
+            date_filter = Filter(must=filter_conditions)
 
-        date_filter = Filter(must=filter_conditions)
+            # Query Qdrant for all summaries matching the date using the provided collection name
+            search_results = qdrant_client.search(
+                collection_name=collection_name,
+                query_vector=[0] * 1024,
+                query_filter=date_filter,
+                limit=100,
+                with_payload=True,
+                with_vectors=False,
+            )
+        else:
+            # pipeline requires a different format for the collection name
+            pipeline = CustomIngestionPipeline(
+                community_id=community_id,
+                collection_name=f"{input.platform_name}_summary",
+            )
+            # get the latest date from the collection
+            latest_date = pipeline.get_latest_document_date(
+                field_name="date", field_schema=models.PayloadSchemaType.DATETIME
+            )
 
-        # Query Qdrant for all summaries matching the date using the provided collection name
-        search_results = qdrant_client.search(
-            collection_name=collection_name,
-            query_vector=[0] * 1024,
-            query_filter=date_filter,
-            limit=100,
-            with_payload=True,
-            with_vectors=False,
-        )
+            filter_conditions = [
+                FieldCondition(
+                    key="date", match=MatchValue(value=latest_date.strftime("%Y-%m-%d"))
+                )
+            ]
+            date_filter = Filter(must=filter_conditions)
+            search_results = qdrant_client.search(
+                collection_name=collection_name,
+                query_vector=[0] * 1024,
+                query_filter=date_filter,
+                limit=100,
+                with_payload=True,
+                with_vectors=False,
+            )
 
         summaries = []
         for point in search_results:
@@ -205,7 +232,7 @@ async def fetch_telegram_summaries_by_date_range(
     end_date = input.end_date
     extract_text_only = input.extract_text_only
     collection_name = input.collection_name
-
+    community_id = input.community_id
     if not collection_name:
         raise ValueError("Collection name is required but was not provided")
 
@@ -235,7 +262,8 @@ async def fetch_telegram_summaries_by_date_range(
             date_input = TelegramSummariesActivityInput(
                 date=date,
                 extract_text_only=extract_text_only,
-                collection_name=collection_name,
+                platform_name=input.platform_name,
+                community_id=community_id,
             )
             summaries = await fetch_telegram_summaries_by_date(date_input)
             result[date] = summaries

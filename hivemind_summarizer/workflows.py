@@ -9,7 +9,7 @@ with workflow.unsafe.imports_passed_through():
     from .activities import (
         fetch_telegram_summaries_by_date,
         fetch_telegram_summaries_by_date_range,
-        get_collection_name,
+        get_platform_name,
     )
     from .schema import (
         TelegramSummariesActivityInput,
@@ -54,8 +54,8 @@ class TelegramSummariesWorkflow:
 
         logging.info("Getting collection name!")
         # First, get the collection name
-        collection_name = await workflow.execute_activity(
-            get_collection_name,
+        platform_name = await workflow.execute_activity(
+            get_platform_name,
             TelegramGetCollectionNameInput(
                 platform_id=input.platform_id, community_id=input.community_id
             ),
@@ -70,7 +70,8 @@ class TelegramSummariesWorkflow:
                 fetch_telegram_summaries_by_date,
                 TelegramSummariesActivityInput(
                     date=input.start_date,
-                    collection_name=collection_name,
+                    platform_name=platform_name,
+                    community_id=input.community_id,
                     extract_text_only=input.extract_text_only,
                 ),
                 schedule_to_close_timeout=timedelta(minutes=2),
@@ -84,7 +85,8 @@ class TelegramSummariesWorkflow:
                 TelegramSummariesRangeActivityInput(
                     start_date=input.start_date,
                     end_date=input.end_date,
-                    collection_name=collection_name,
+                    platform_name=platform_name,
+                    community_id=input.community_id,
                     extract_text_only=input.extract_text_only,
                 ),
                 schedule_to_close_timeout=timedelta(minutes=2),
