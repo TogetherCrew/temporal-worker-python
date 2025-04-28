@@ -12,7 +12,7 @@ from hivemind_etl.activities import (
 from hivemind_summarizer.activities import (
     fetch_telegram_summaries_by_date,
     fetch_telegram_summaries_by_date_range,
-    get_collection_name,
+    get_platform_name,
 )
 from workflows import (
     CommunityWebsiteWorkflow,
@@ -42,5 +42,5 @@ ACTIVITIES = [
     say_hello,
     fetch_telegram_summaries_by_date,
     fetch_telegram_summaries_by_date_range,
-    get_collection_name,
+    get_platform_name,
 ]
