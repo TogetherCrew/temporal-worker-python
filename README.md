@@ -58,7 +58,7 @@ from temporalio.client import Client
 from hivemind_summarizer.workflows import PlatformSummariesWorkflow
 from hivemind_summarizer.schema import PlatformFetchSummariesWorkflowInput
 
-async def run_okatfirn_workflow():
+async def run_summary_workflow():
     client = await Client.connect("localhost:7233")
     
     # Create workflow input
