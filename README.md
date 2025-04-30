@@ -11,7 +11,7 @@ This repository contains TogetherCrew's Temporal Python workflows for data proce
 
 ### Hivemind Summarizer
 
-- **Telegram Summaries**: Retrieves and processes summaries from Telegram data stored in Qdrant, with options to fetch by date or date range.
+- **Platform Summaries**: Retrieves and processes summaries from Platform data stored in Qdrant, with options to fetch by date or date range.
 
 ## Architecture
 
@@ -49,20 +49,20 @@ The project uses Temporal for workflow orchestration with the following componen
 
 ## Usage Examples
 
-### Running a Telegram Summary Workflow
+### Running a Platform Summary Workflow
 
 To fetch summaries for a specific community and date range:
 
 ```python
 from temporalio.client import Client
-from hivemind_summarizer.workflows import TelegramSummariesWorkflow
-from hivemind_summarizer.schema import TelegramFetchSummariesWorkflowInput
+from hivemind_summarizer.workflows import PlatformSummariesWorkflow
+from hivemind_summarizer.schema import PlatformFetchSummariesWorkflowInput
 
-async def run_telegram_workflow():
+async def run_okatfirn_workflow():
     client = await Client.connect("localhost:7233")
     
     # Create workflow input
-    input_data = TelegramFetchSummariesWorkflowInput(
+    input_data = PlatformFetchSummariesWorkflowInput(
         platform_id="your_platform_id",
         community_id="your_community_id",
         start_date="2023-05-01",
@@ -72,9 +72,9 @@ async def run_telegram_workflow():
     
     # Execute workflow
     result = await client.execute_workflow(
-        TelegramSummariesWorkflow.run,
+        PlatformSummariesWorkflow.run,
         input_data,
-        id="telegram-summaries-workflow",
+        id="platform-summaries-workflow",
         task_queue="your_task_queue"
     )
     

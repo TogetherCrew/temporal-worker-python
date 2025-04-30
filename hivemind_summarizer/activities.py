@@ -14,9 +14,9 @@ from qdrant_client.http import models
 
 with workflow.unsafe.imports_passed_through():
     from hivemind_summarizer.schema import (
-        TelegramSummariesActivityInput,
-        TelegramSummariesRangeActivityInput,
-        TelegramGetCollectionNameInput,
+        PlatformSummariesActivityInput,
+        PlatformSummariesRangeActivityInput,
+        PlatformGetCollectionNameInput,
     )
 
 
@@ -42,13 +42,13 @@ def extract_summary_text(node_content: dict[str, Any]) -> str:
 
 
 @activity.defn
-async def get_platform_name(input: TelegramGetCollectionNameInput) -> str:
+async def get_platform_name(input: PlatformGetCollectionNameInput) -> str:
     """
     Activity that extracts collection name from MongoDB based on platform_id and community_id.
 
     Parameters
     ----------
-    input: TelegramGetCollectionNameInput
+    input: PlatformGetCollectionNameInput
         Input object containing platform_id and community_id
 
     Returns
@@ -93,15 +93,15 @@ async def get_platform_name(input: TelegramGetCollectionNameInput) -> str:
 
 
 @activity.defn
-async def fetch_telegram_summaries_by_date(
-    input: TelegramSummariesActivityInput,
+async def fetch_platform_summaries_by_date(
+    input: PlatformSummariesActivityInput,
 ) -> list[dict[str, Any]] | str:
     """
-    Activity that fetches Telegram summaries for a specific date from Qdrant.
+    Activity that fetches Platform summaries for a specific date from Qdrant.
 
     Parameters
     ----------
-    input : TelegramSummariesActivityInput
+    input : PlatformSummariesActivityInput
         Input object containing date, collection_name and extract_text_only
 
     Returns
@@ -114,7 +114,7 @@ async def fetch_telegram_summaries_by_date(
     collection_name = f"{input.community_id}_{input.platform_name}_summary"
     community_id = input.community_id
 
-    logging.info("Started fetch_telegram_summaries_by_date!")
+    logging.info("Started fetch_platform_summaries_by_date!")
 
     if not input.platform_name:
         raise ValueError("Platform name is required but was not provided")
@@ -207,15 +207,15 @@ async def fetch_telegram_summaries_by_date(
 
 
 @activity.defn
-async def fetch_telegram_summaries_by_date_range(
-    input: TelegramSummariesRangeActivityInput,
+async def fetch_platform_summaries_by_date_range(
+    input: PlatformSummariesRangeActivityInput,
 ) -> dict[str, list[dict[str, Any] | str]]:
     """
-    Activity that fetches Telegram summaries for a range of dates from Qdrant.
+    Activity that fetches summaries for a range of dates from Qdrant.
 
     Parameters
     ----------
-    input : TelegramSummariesRangeActivityInput
+    input : PlatformSummariesRangeActivityInput
         Input object containing start_date, end_date, platform_name and community_id
 
     Returns
@@ -259,13 +259,13 @@ async def fetch_telegram_summaries_by_date_range(
         # Fetch summaries for each date
         result = {}
         for date in date_range:
-            date_input = TelegramSummariesActivityInput(
+            date_input = PlatformSummariesActivityInput(
                 date=date,
                 extract_text_only=extract_text_only,
                 platform_name=input.platform_name,
                 community_id=community_id,
             )
-            summaries = await fetch_telegram_summaries_by_date(date_input)
+            summaries = await fetch_platform_summaries_by_date(date_input)
             result[date] = summaries
 
         return result
