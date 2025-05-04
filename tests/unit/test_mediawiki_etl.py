@@ -164,7 +164,7 @@ class TestMediawikiETL(unittest.TestCase):
 
         # Verify that methods were called correctly
         mock_ingestion_pipeline_class.assert_called_once_with(
-            self.community_id, collection_name="mediawiki"
+            self.community_id, collection_name=self.platform_id
         )
         mock_pipeline.run_pipeline.assert_called_once_with(documents)
         self.assertFalse(os.path.exists(etl.dump_dir))
@@ -192,7 +192,7 @@ class TestMediawikiETL(unittest.TestCase):
 
         # Verify that methods were called correctly
         mock_ingestion_pipeline_class.assert_called_once_with(
-            self.community_id, collection_name="mediawiki"
+            self.community_id, collection_name=self.platform_id
         )
         mock_pipeline.run_pipeline.assert_called_once_with(documents)
         self.assertTrue(os.path.exists(etl.dump_dir))
