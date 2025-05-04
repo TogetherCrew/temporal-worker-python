@@ -12,6 +12,7 @@ class TestMediawikiETL(unittest.TestCase):
         self.community_id = "test_community"
         self.api_url = "https://example.com/api.php"
         self.custom_path = "custom/path"
+        self.platform_id = "test_platform"
         self.namespaces = [0, 1]  # Main and Talk namespaces
 
         # Create a temporary dumps directory
@@ -26,7 +27,11 @@ class TestMediawikiETL(unittest.TestCase):
             shutil.rmtree(self.custom_path)
 
     def test_mediawiki_etl_initialization(self):
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
         self.assertEqual(etl.community_id, self.community_id)
         self.assertTrue(etl.delete_dump_after_load)
         self.assertEqual(etl.dump_dir, f"dumps/{self.community_id}")
@@ -35,12 +40,17 @@ class TestMediawikiETL(unittest.TestCase):
             community_id=self.community_id,
             namespaces=self.namespaces,
             delete_dump_after_load=False,
+            platform_id=self.platform_id,
         )
         self.assertFalse(etl.delete_dump_after_load)
 
     def test_extract_with_default_path(self):
         # Create a ETL instance with mocked wikiteam_crawler
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
         etl.wikiteam_crawler = Mock()
 
         etl.extract(self.api_url)
@@ -51,7 +61,11 @@ class TestMediawikiETL(unittest.TestCase):
 
     def test_extract_with_custom_path(self):
         # Create a ETL instance with mocked wikiteam_crawler
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
         etl.wikiteam_crawler = Mock()
 
         etl.extract(self.api_url, self.custom_path)
@@ -63,7 +77,11 @@ class TestMediawikiETL(unittest.TestCase):
 
     @patch("hivemind_etl.mediawiki.etl.parse_mediawiki_xml")
     def test_transform_success(self, mock_parse_mediawiki_xml):
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
 
         # Mock page data
         mock_page = Mock()
@@ -98,7 +116,11 @@ class TestMediawikiETL(unittest.TestCase):
     @patch("hivemind_etl.mediawiki.etl.logging")
     @patch("hivemind_etl.mediawiki.etl.parse_mediawiki_xml")
     def test_transform_error_handling(self, mock_parse_mediawiki_xml, mock_logging):
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
 
         # Mock page that will raise an exception
         mock_page = Mock()
@@ -122,7 +144,11 @@ class TestMediawikiETL(unittest.TestCase):
 
     @patch("hivemind_etl.mediawiki.etl.CustomIngestionPipeline")
     def test_load_with_dump_deletion(self, mock_ingestion_pipeline_class):
-        etl = MediawikiETL(community_id=self.community_id, namespaces=self.namespaces)
+        etl = MediawikiETL(
+            community_id=self.community_id,
+            namespaces=self.namespaces,
+            platform_id=self.platform_id,
+        )
         documents = [Document(text="Test content")]
 
         # Setup the mock
@@ -149,6 +175,7 @@ class TestMediawikiETL(unittest.TestCase):
             community_id=self.community_id,
             namespaces=self.namespaces,
             delete_dump_after_load=False,
+            platform_id=self.platform_id,
         )
         documents = [Document(text="Test content")]
 

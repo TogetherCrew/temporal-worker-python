@@ -67,6 +67,7 @@ class TestGetMediaWikiModules(TestCase):
             [0, 1, 2],
         )
         self.assertEqual(result[0]["base_url"], "http://example.com/api")
+        self.assertEqual(result[0]["platform_id"], str(platform_id))
 
     def test_get_mediawiki_communities_data_multiple_platforms(self):
         """
@@ -146,6 +147,7 @@ class TestGetMediaWikiModules(TestCase):
                 "community_id": str(community_id),
                 "namespaces": [0, 1, 2],
                 "base_url": "http://example1.com/api",
+                "platform_id": str(platform_id1),
             },
         )
         self.assertEqual(
@@ -154,6 +156,7 @@ class TestGetMediaWikiModules(TestCase):
                 "community_id": str(community_id),
                 "namespaces": [3, 4, 5],
                 "base_url": "http://example2.com/api",
+                "platform_id": str(platform_id2),
             },
         )
 
@@ -237,6 +240,7 @@ class TestGetMediaWikiModules(TestCase):
                 "community_id": str(community_id),
                 "namespaces": [0, 1, 2],
                 "base_url": "http://example1.com/api",
+                "platform_id": str(platform_id1),
             },
         )
 
@@ -318,5 +322,6 @@ class TestGetMediaWikiModules(TestCase):
                 "community_id": str(community_id),
                 "namespaces": [3, 4, 5],
                 "base_url": "http://example2.com/api",
+                "platform_id": str(platform_id2),
             },
         )
