@@ -29,7 +29,7 @@ class CommunityWebsiteWorkflow:
         # Execute activities in sequence with retries
         raw_data = await workflow.execute_activity(
             extract_website,
-            args=[urls, community_id],
+            args=[urls, community_id, platform_id],
             start_to_close_timeout=timedelta(minutes=30),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=10),
@@ -40,7 +40,7 @@ class CommunityWebsiteWorkflow:
 
         documents = await workflow.execute_activity(
             transform_website_data,
-            args=[raw_data, community_id],
+            args=[raw_data, community_id, platform_id],
             start_to_close_timeout=timedelta(minutes=10),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=5),
@@ -51,7 +51,7 @@ class CommunityWebsiteWorkflow:
 
         await workflow.execute_activity(
             load_website_data,
-            args=[documents, community_id],
+            args=[documents, community_id, platform_id],
             start_to_close_timeout=timedelta(minutes=60),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=5),

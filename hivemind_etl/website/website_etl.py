@@ -10,6 +10,7 @@ class WebsiteETL:
     def __init__(
         self,
         community_id: str,
+        platform_id: str,
     ) -> None:
         """
         Parameters
@@ -21,11 +22,11 @@ class WebsiteETL:
             raise ValueError("community_id must be a non-empty string")
 
         self.community_id = community_id
-        collection_name = "website"
+        self.platform_id = platform_id
 
         # preparing the ingestion pipeline
         self.ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name=collection_name
+            self.community_id, collection_name=self.platform_id
         )
 
     async def extract(

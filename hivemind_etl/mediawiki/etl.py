@@ -13,9 +13,11 @@ class MediawikiETL:
         self,
         community_id: str,
         namespaces: list[int],
+        platform_id: str,
         delete_dump_after_load: bool = True,
     ) -> None:
         self.community_id = community_id
+        self.platform_id = platform_id
 
         self.proxy_url = os.getenv("PROXY_URL", "")
         if self.proxy_url:
@@ -96,7 +98,7 @@ class MediawikiETL:
     def load(self, documents: list[Document]) -> None:
         logging.info(f"Loading {len(documents)} documents into Qdrant!")
         ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name="mediawiki"
+            self.community_id, collection_name=self.platform_id
         )
         ingestion_pipeline.run_pipeline(documents)
         logging.info(f"Loaded {len(documents)} documents into Qdrant!")

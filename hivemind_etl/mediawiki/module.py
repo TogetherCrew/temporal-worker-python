@@ -28,7 +28,8 @@ class ModulesMediaWiki(ModulesBase):
             example data output:
             ```
             [{
-                "community_id": "6579c364f1120850414e0dc5",
+                "platform_id": "xxxx",
+                "community_id": "xxxxxx",
                 "base_url": "some_api_url",
                 "namespaces": [1, 2, 3],
             }]
@@ -87,6 +88,7 @@ class ModulesMediaWiki(ModulesBase):
 
                     communities_data.append(
                         {
+                            "platform_id": str(platform_id),
                             "community_id": str(community),
                             "namespaces": namespaces,
                             "base_url": base_url + path,  # type: ignore
