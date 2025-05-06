@@ -10,22 +10,27 @@ class WebsiteETL:
     def __init__(
         self,
         community_id: str,
+        platform_id: str,
     ) -> None:
         """
         Parameters
         -----------
         community_id : str
             the community to save its data
+        platform_id : str
+            the platform to save its data
+        
+        Note: the collection name would be `community_id_platform_id`
         """
         if not community_id or not isinstance(community_id, str):
             raise ValueError("community_id must be a non-empty string")
 
         self.community_id = community_id
-        collection_name = "website"
+        self.platform_id = platform_id
 
         # preparing the ingestion pipeline
         self.ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name=collection_name
+            self.community_id, collection_name=self.platform_id
         )
 
     async def extract(

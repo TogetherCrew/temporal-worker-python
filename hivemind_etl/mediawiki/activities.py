@@ -58,11 +58,16 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
         community_id = mediawiki_platform["community_id"]
         api_url = mediawiki_platform["base_url"]
         namespaces = mediawiki_platform["namespaces"]
+        platform_id = mediawiki_platform["platform_id"]
 
         logging.info(
             f"Starting extraction for community {community_id} with API URL: {api_url}"
         )
-        mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
+        mediawiki_etl = MediawikiETL(
+            community_id=community_id,
+            namespaces=namespaces,
+            platform_id=platform_id,
+        )
         mediawiki_etl.extract(api_url=api_url)
         logging.info(f"Completed extraction for community {community_id}")
     except Exception as e:
@@ -78,11 +83,16 @@ async def transform_mediawiki_data(
     """Transform the extracted MediaWiki data."""
 
     community_id = mediawiki_platform["community_id"]
+    platform_id = mediawiki_platform["platform_id"]
     try:
         namespaces = mediawiki_platform["namespaces"]
 
         logging.info(f"Starting transformation for community {community_id}")
-        mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
+        mediawiki_etl = MediawikiETL(
+            community_id=community_id,
+            namespaces=namespaces,
+            platform_id=platform_id,
+        )
         result = mediawiki_etl.transform()
         logging.info(f"Completed transformation for community {community_id}")
         return result
@@ -95,6 +105,7 @@ async def transform_mediawiki_data(
 async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
     """Load the transformed MediaWiki data into the database."""
     community_id = mediawiki_platform["community_id"]
+    platform_id = mediawiki_platform["platform_id"]
     namespaces = mediawiki_platform["namespaces"]
 
     try:
@@ -103,7 +114,11 @@ async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
         documents = [Document.from_dict(doc) for doc in documents_dict]
 
         logging.info(f"Starting data load for community {community_id}")
-        mediawiki_etl = MediawikiETL(community_id=community_id, namespaces=namespaces)
+        mediawiki_etl = MediawikiETL(
+            community_id=community_id,
+            namespaces=namespaces,
+            platform_id=platform_id,
+        )
         mediawiki_etl.load(documents=documents)
         logging.info(f"Completed data load for community {community_id}")
     except Exception as e:

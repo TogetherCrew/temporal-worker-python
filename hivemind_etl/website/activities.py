@@ -43,13 +43,15 @@ async def get_hivemind_website_comminities(
 
 
 @activity.defn
-async def extract_website(urls: list[str], community_id: str) -> list[dict]:
+async def extract_website(
+    urls: list[str], community_id: str, platform_id: str
+) -> list[dict]:
     """Extract data from website URLs."""
     try:
         logging.info(
-            f"Starting extraction for community {community_id} with {len(urls)} URLs"
+            f"Starting extraction for community {community_id} | platform {platform_id} with {len(urls)} URLs"
         )
-        website_etl = WebsiteETL(community_id=community_id)
+        website_etl = WebsiteETL(community_id=community_id, platform_id=platform_id)
         result = await website_etl.extract(urls=urls)
         logging.info(f"Completed extraction for community {community_id}")
         return result
@@ -60,12 +62,14 @@ async def extract_website(urls: list[str], community_id: str) -> list[dict]:
 
 @activity.defn
 async def transform_website_data(
-    raw_data: list[dict], community_id: str
+    raw_data: list[dict], community_id: str, platform_id: str
 ) -> list[Document]:
     """Transform the extracted raw data."""
     try:
-        logging.info(f"Starting transformation for community {community_id}")
-        website_etl = WebsiteETL(community_id=community_id)
+        logging.info(
+            f"Starting transformation for community {community_id} | platform {platform_id}"
+        )
+        website_etl = WebsiteETL(community_id=community_id, platform_id=platform_id)
         result = website_etl.transform(raw_data=raw_data)
         logging.info(f"Completed transformation for community {community_id}")
         return result
@@ -75,11 +79,15 @@ async def transform_website_data(
 
 
 @activity.defn
-async def load_website_data(documents: list[Document], community_id: str) -> None:
+async def load_website_data(
+    documents: list[Document], community_id: str, platform_id: str
+) -> None:
     """Load the transformed data into the database."""
     try:
-        logging.info(f"Starting data load for community {community_id}")
-        website_etl = WebsiteETL(community_id=community_id)
+        logging.info(
+            f"Starting data load for community {community_id} | platform {platform_id}"
+        )
+        website_etl = WebsiteETL(community_id=community_id, platform_id=platform_id)
         website_etl.load(documents=documents)
         logging.info(f"Completed data load for community {community_id}")
     except Exception as e:

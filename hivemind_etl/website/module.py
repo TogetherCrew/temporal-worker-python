@@ -29,8 +29,8 @@ class ModulesWebsite(ModulesBase):
             example data output:
             ```
             [{
-                "community_id": "6579c364f1120850414e0dc5",
-                "platform_id": "6579c364f1120850414e0dc6",
+                "community_id": "xxxx",
+                "platform_id": "xxxxxxx",
                 "urls": ["link1", "link2"],
             }]
             ```

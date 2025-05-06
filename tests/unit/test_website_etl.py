@@ -14,7 +14,8 @@ class TestWebsiteETL(IsolatedAsyncioTestCase):
         """
         load_dotenv()
         self.community_id = "test_community"
-        self.website_etl = WebsiteETL(self.community_id)
+        self.platform_id = "test_platform"
+        self.website_etl = WebsiteETL(self.community_id, self.platform_id)
         self.website_etl.crawlee_client = AsyncMock()
         self.website_etl.ingestion_pipeline = MagicMock()
 
