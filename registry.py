@@ -8,6 +8,7 @@ from hivemind_etl.activities import (
     get_hivemind_mediawiki_platforms,
     transform_mediawiki_data,
     load_mediawiki_data,
+    process_document,
 )
 from hivemind_summarizer.activities import (
     fetch_platform_summaries_by_date,
@@ -20,6 +21,7 @@ from workflows import (
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
+    IngestionWorkflow,
 )
 
 WORKFLOWS = [
@@ -28,6 +30,7 @@ WORKFLOWS = [
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
+    IngestionWorkflow,
 ]
 
 ACTIVITIES = [
@@ -43,4 +46,5 @@ ACTIVITIES = [
     fetch_platform_summaries_by_date,
     fetch_platform_summaries_by_date_range,
     get_platform_name,
+    process_document,
 ]

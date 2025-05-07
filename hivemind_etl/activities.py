@@ -13,6 +13,9 @@ from hivemind_etl.mediawiki.activities import (
     transform_mediawiki_data,
     load_mediawiki_data,
 )
+from hivemind_etl.simple_ingestion.pipeline import (
+    process_document,
+)
 
 from temporalio import activity
 

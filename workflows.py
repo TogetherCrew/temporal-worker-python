@@ -10,6 +10,9 @@ from hivemind_etl.website.workflows import (
 from hivemind_etl.mediawiki.workflows import (
     MediaWikiETLWorkflow,
 )
+from hivemind_etl.simple_ingestion.pipeline import (
+    IngestionWorkflow,
+)
 from hivemind_summarizer.workflows import PlatformSummariesWorkflow
 
 from temporalio import workflow
