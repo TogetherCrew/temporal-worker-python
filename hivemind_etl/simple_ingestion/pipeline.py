@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from temporalio import activity,workflow
+from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 from temporalio.workflow import execute_activity
 from .schema import IngestionRequest
