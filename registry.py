@@ -17,7 +17,6 @@ from hivemind_summarizer.activities import (
 )
 from workflows import (
     CommunityWebsiteWorkflow,
-    SayHello,
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
@@ -26,7 +25,6 @@ from workflows import (
 
 WORKFLOWS = [
     CommunityWebsiteWorkflow,
-    SayHello,
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
