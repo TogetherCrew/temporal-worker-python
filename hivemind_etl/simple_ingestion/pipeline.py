@@ -1,11 +1,13 @@
 from datetime import timedelta
 
-from temporalio import workflow
+from temporalio import activity,workflow
 from temporalio.common import RetryPolicy
 from temporalio.workflow import execute_activity
 from .schema import IngestionRequest
-from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
-from llama_index.core import Document
+
+with workflow.unsafe.imports_passed_through():
+    from tc_hivemind_backend.ingest_qdrant import CustomIngestionPipeline
+    from llama_index.core import Document
 
 
 @workflow.defn
@@ -48,7 +50,7 @@ class IngestionWorkflow:
         )
 
 
-@workflow.activity
+@activity.defn
 async def process_document(
     ingestion_request: IngestionRequest,
 ) -> None:
@@ -75,7 +77,7 @@ async def process_document(
     # Initialize the ingestion pipeline
     pipeline = CustomIngestionPipeline(
         community_id=ingestion_request.communityId,
-        collectionName=collection_name,
+        collection_name=collection_name,
     )
 
     document = Document(
