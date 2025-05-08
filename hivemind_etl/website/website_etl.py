@@ -19,7 +19,7 @@ class WebsiteETL:
             the community to save its data
         platform_id : str
             the platform to save its data
-        
+
         Note: the collection name would be `community_id_platform_id`
         """
         if not community_id or not isinstance(community_id, str):
