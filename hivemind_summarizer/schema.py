@@ -4,16 +4,16 @@ from pydantic import BaseModel
 class PlatformSummariesActivityInput(BaseModel):
     date: str | None = None
     extract_text_only: bool = True
-    platform_id: str | None = None
-    community_id: str | None = None
+    platform_id: str
+    community_id: str
 
 
 class PlatformSummariesRangeActivityInput(BaseModel):
     start_date: str
     end_date: str
     extract_text_only: bool = True
-    platform_id: str | None = None
-    community_id: str | None = None
+    platform_id: str
+    community_id: str
 
 
 class PlatformFetchSummariesWorkflowInput(BaseModel):
