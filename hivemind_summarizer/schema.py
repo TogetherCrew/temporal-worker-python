@@ -28,7 +28,6 @@ class RealTimeSummaryWorkflowInput(BaseModel):
     period: str | None = (
         None  # could be in format of hour (1h, 4h, ...) or day %Y-%m-%d
     )
-    extract_text_only: bool = True
     platform_id: str | None = None
     community_id: str | None = None
     collection_name: str | None = None
