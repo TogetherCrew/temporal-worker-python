@@ -261,7 +261,9 @@ async def fetch_and_summarize_realtime_data(
                 hours = int(input.period[:-1])
                 time_threshold = now - timedelta(hours=hours)
             elif re.match(r"^\d{4}-\d{2}-\d{2}$", input.period):
-                time_threshold = datetime.strptime(input.period, "%Y-%m-%d")
+                time_threshold = datetime.strptime(input.period, "%Y-%m-%d").replace(
+                    tzinfo=timezone.utc
+                )
             else:
                 raise ValueError(
                     "Period must be in format 'Nh' (e.g., '1h', '4h') or 'YYYY-MM-DD'"
