@@ -12,6 +12,7 @@ This repository contains TogetherCrew's Temporal Python workflows for data proce
 ### Hivemind Summarizer
 
 - **Platform Summaries**: Retrieves and processes summaries from Platform data stored in Qdrant, with options to fetch by date or date range.
+- **Real-Time Summaries**: Generates new summaries for recent data across platforms or specific communities.
 
 ## Architecture
 
@@ -51,23 +52,23 @@ The project uses Temporal for workflow orchestration with the following componen
 
 ### Running a Platform Summary Workflow
 
-To fetch summaries for a specific community and date range:
+To fetch existing summaries for a specific community and date range from Qdrant:
 
 ```python
 from temporalio.client import Client
 from hivemind_summarizer.workflows import PlatformSummariesWorkflow
 from hivemind_summarizer.schema import PlatformFetchSummariesWorkflowInput
 
-async def run_okatfirn_workflow():
+async def run_platform_summaries_workflow():
     client = await Client.connect("localhost:7233")
     
     # Create workflow input
     input_data = PlatformFetchSummariesWorkflowInput(
-        platform_id="your_platform_id",
-        community_id="your_community_id",
-        start_date="2023-05-01",
-        end_date="2023-05-07",
-        extract_text_only=True
+        platform_id="your_platform_id",  # Required: the platform to fetch summaries from
+        community_id="your_community_id",  # Required: the community to fetch summaries from
+        start_date="2023-05-01",  # Optional: fetch summaries from this date
+        end_date="2023-05-07",    # Optional: fetch summaries until this date
+        extract_text_only=True    # Optional: whether to extract only text content
     )
     
     # Execute workflow
@@ -78,8 +79,46 @@ async def run_okatfirn_workflow():
         task_queue="your_task_queue"
     )
     
+    # Returns a list of existing summaries from Qdrant
     return result
 ```
+
+Note: This workflow only retrieves existing summaries that have already been generated and stored in Qdrant. It does not generate new summaries. Use this when you want to access previously generated summaries for a specific platform and community.
+
+### Running a Real-Time Summary Workflow
+
+To generate new summaries for recent data:
+
+```python
+from temporalio.client import Client
+from hivemind_summarizer.workflows import RealTimeSummaryWorkflow
+from hivemind_summarizer.schema import RealTimeSummaryWorkflowInput
+
+async def run_realtime_summary_workflow():
+    client = await Client.connect("localhost:7233")
+    
+    # Create workflow input
+    input_data = RealTimeSummaryWorkflowInput(
+        period="4h",  # Optional: time period (e.g., "1h", "4h") or date in %Y-%m-%d format
+        platform_id="your_platform_id",  # Optional: filter by platform
+        community_id="your_community_id",  # Optional: filter by community
+        collection_name="your_collection"  # Optional: filter by collection
+    )
+    
+    # Execute workflow
+    result = await client.execute_workflow(
+        RealTimeSummaryWorkflow.run,
+        input_data,
+        id="realtime-summary-workflow",
+        task_queue="your_task_queue"
+    )
+    
+    # Returns newly generated summary text
+    return result
+```
+
+Note: This workflow actively generates new summaries for recent data. Use this when you want to create fresh summaries for the specified time period and filters.
+Note 2: Either one of the filter by collection or filter by platform and community should be given. (to identify the collection to access tha raw data)
 
 ### Running a MediaWiki ETL Workflow
 

@@ -13,7 +13,7 @@ from hivemind_etl.activities import (
 from hivemind_summarizer.activities import (
     fetch_platform_summaries_by_date,
     fetch_platform_summaries_by_date_range,
-    get_platform_name,
+    fetch_and_summarize_realtime_data,
 )
 from workflows import (
     CommunityWebsiteWorkflow,
@@ -21,6 +21,7 @@ from workflows import (
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
     IngestionWorkflow,
+    RealTimeSummaryWorkflow,
 )
 
 WORKFLOWS = [
@@ -29,6 +30,7 @@ WORKFLOWS = [
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
     IngestionWorkflow,
+    RealTimeSummaryWorkflow,
 ]
 
 ACTIVITIES = [
@@ -43,6 +45,6 @@ ACTIVITIES = [
     say_hello,
     fetch_platform_summaries_by_date,
     fetch_platform_summaries_by_date_range,
-    get_platform_name,
     process_document,
+    fetch_and_summarize_realtime_data,
 ]

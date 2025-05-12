@@ -9,12 +9,10 @@ with workflow.unsafe.imports_passed_through():
     from .activities import (
         fetch_platform_summaries_by_date,
         fetch_platform_summaries_by_date_range,
-        get_platform_name,
     )
     from .schema import (
         PlatformSummariesActivityInput,
         PlatformSummariesRangeActivityInput,
-        PlatformGetCollectionNameInput,
         PlatformFetchSummariesWorkflowInput,
     )
 
@@ -52,17 +50,6 @@ class PlatformSummariesWorkflow:
             )
         )
 
-        logging.info("Getting collection name!")
-        # First, get the collection name
-        platform_name = await workflow.execute_activity(
-            get_platform_name,
-            PlatformGetCollectionNameInput(
-                platform_id=input.platform_id, community_id=input.community_id
-            ),
-            schedule_to_close_timeout=timedelta(minutes=1),
-            retry_policy=RetryPolicy(maximum_attempts=3),
-        )
-
         # if end_date is not provided, the workflow will fetch summaries just for the start_date
         if input.end_date is None:
             logging.info("Getting summaries by date!")
@@ -70,7 +57,7 @@ class PlatformSummariesWorkflow:
                 fetch_platform_summaries_by_date,
                 PlatformSummariesActivityInput(
                     date=input.start_date,
-                    platform_name=platform_name,
+                    platform_id=input.platform_id,
                     community_id=input.community_id,
                     extract_text_only=input.extract_text_only,
                 ),
@@ -85,7 +72,7 @@ class PlatformSummariesWorkflow:
                 PlatformSummariesRangeActivityInput(
                     start_date=input.start_date,
                     end_date=input.end_date,
-                    platform_name=platform_name,
+                    platform_id=input.platform_id,
                     community_id=input.community_id,
                     extract_text_only=input.extract_text_only,
                 ),
