@@ -44,6 +44,7 @@ class MediaWikiETLWorkflow:
                         "base_url": platform["base_url"],
                         "community_id": platform["community_id"],
                         "namespaces": platform["namespaces"],
+                        "platform_id": platform["platform_id"],
                     }
                     # Extract data from MediaWiki
                     await workflow.execute_activity(
