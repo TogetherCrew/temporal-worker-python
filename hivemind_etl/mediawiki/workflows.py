@@ -61,9 +61,9 @@ class MediaWikiETLWorkflow:
                     documents = await workflow.execute_activity(
                         transform_mediawiki_data,
                         mediawiki_platform,
-                        start_to_close_timeout=timedelta(minutes=30),
+                        start_to_close_timeout=timedelta(hours=6),
                         retry_policy=RetryPolicy(
-                            initial_interval=timedelta(minutes=1),
+                            initial_interval=timedelta(minutes=5),
                             maximum_attempts=3,
                         ),
                     )
@@ -73,7 +73,7 @@ class MediaWikiETLWorkflow:
                     await workflow.execute_activity(
                         load_mediawiki_data,
                         mediawiki_platform,
-                        start_to_close_timeout=timedelta(minutes=30),
+                        start_to_close_timeout=timedelta(hours=3),
                         retry_policy=RetryPolicy(
                             initial_interval=timedelta(minutes=1),
                             maximum_attempts=3,
