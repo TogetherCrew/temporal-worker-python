@@ -55,7 +55,7 @@ async def get_hivemind_mediawiki_platforms(
 @activity.defn
 async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
     """
-    Extract data from MediaWiki API URL and store in S3.
+    Extract data from MediaWiki API URL
     """
     try:
         community_id = mediawiki_platform["community_id"]
