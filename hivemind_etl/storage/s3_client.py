@@ -17,7 +17,7 @@ class S3Client:
         self.access_key = os.getenv("AWS_ACCESS_KEY_ID")
         self.secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
         self.bucket_name = os.getenv("AWS_S3_BUCKET")
-        self.region = os.getenv("AWS_REGION", "us-east-1")
+        self.region = os.getenv("AWS_REGION")
         self.secure = os.getenv("AWS_SECURE", "true").lower() == "true"
 
         # Check each required variable and log if missing
@@ -30,6 +30,8 @@ class S3Client:
             missing_vars.append("AWS_SECRET_ACCESS_KEY")
         if not self.bucket_name:
             missing_vars.append("AWS_S3_BUCKET")
+        if not self.region:
+            missing_vars.append("AWS_REGION")
 
         if missing_vars:
             error_msg = (
