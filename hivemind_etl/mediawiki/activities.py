@@ -6,6 +6,7 @@ from temporalio import activity, workflow
 with workflow.unsafe.imports_passed_through():
     from hivemind_etl.mediawiki.module import ModulesMediaWiki
     from hivemind_etl.mediawiki.etl import MediawikiETL
+    from hivemind_etl.storage.s3_client import S3Client
     from llama_index.core import Document
 
 
@@ -53,7 +54,9 @@ async def get_hivemind_mediawiki_platforms(
 
 @activity.defn
 async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
-    """Extract data from MediaWiki API URL."""
+    """
+    Extract data from MediaWiki API URL and store in S3.
+    """
     try:
         community_id = mediawiki_platform["community_id"]
         api_url = mediawiki_platform["base_url"]
@@ -69,7 +72,8 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
             platform_id=platform_id,
         )
         mediawiki_etl.extract(api_url=api_url)
-        logging.info(f"Completed extraction for community {community_id}")
+
+        logging.info(f"Completed extraction for community {community_id}!")
     except Exception as e:
         community_id = mediawiki_platform["community_id"]
         logging.error(f"Error in extraction for community {community_id}: {str(e)}")
@@ -79,9 +83,20 @@ async def extract_mediawiki(mediawiki_platform: dict[str, Any]) -> None:
 @activity.defn
 async def transform_mediawiki_data(
     mediawiki_platform: dict[str, Any],
-) -> list[Document]:
-    """Transform the extracted MediaWiki data."""
+) -> str:
+    """
+    Transform the extracted MediaWiki data and store in S3.
 
+    Parameters
+    ----------
+    mediawiki_platform : dict[str, Any]
+        The platform configuration
+
+    Returns
+    -------
+    str
+        The S3 key where the transformed data is stored
+    """
     community_id = mediawiki_platform["community_id"]
     platform_id = mediawiki_platform["platform_id"]
     try:
@@ -93,25 +108,51 @@ async def transform_mediawiki_data(
             namespaces=namespaces,
             platform_id=platform_id,
         )
-        result = mediawiki_etl.transform()
-        logging.info(f"Completed transformation for community {community_id}")
-        return result
+
+        # Transform data using the extracted data from S3
+        documents = mediawiki_etl.transform()
+
+        s3_client = S3Client()
+        # Store transformed data in S3
+        transformed_key = s3_client.store_transformed_data(community_id, documents)
+
+        logging.info(
+            f"Completed transformation for community {community_id} and stored in S3 with key: {transformed_key}"
+        )
+        return transformed_key
     except Exception as e:
         logging.error(f"Error in transformation for community {community_id}: {str(e)}")
         raise
 
 
 @activity.defn
-async def load_mediawiki_data(mediawiki_platform: dict[str, Any]) -> None:
-    """Load the transformed MediaWiki data into the database."""
+async def load_mediawiki_data(
+    mediawiki_platform: dict[str, Any],
+) -> None:
+    """
+    Load the transformed MediaWiki data into the database.
+
+    Parameters
+    ----------
+    mediawiki_platform : dict[str, Any]
+        The platform configuration
+    """
     community_id = mediawiki_platform["community_id"]
     platform_id = mediawiki_platform["platform_id"]
     namespaces = mediawiki_platform["namespaces"]
+    transformed_data_key = mediawiki_platform["transformed_data_key"]
 
     try:
-        documents_dict = mediawiki_platform["documents"]
-        # temporal had converted them to dicts, so we need to convert them back to Document objects
-        documents = [Document.from_dict(doc) for doc in documents_dict]
+        # Get transformed data from S3
+        s3_client = S3Client()
+        transformed_data = s3_client.get_data_by_key(transformed_data_key)
+        if not transformed_data:
+            raise ValueError(
+                f"No transformed data found in S3 for community {community_id}"
+            )
+
+        # Convert dict data back to Document objects
+        documents = [Document.from_dict(doc) for doc in transformed_data]
 
         logging.info(f"Starting data load for community {community_id}")
         mediawiki_etl = MediawikiETL(

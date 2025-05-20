@@ -46,7 +46,8 @@ class MediaWikiETLWorkflow:
                         "namespaces": platform["namespaces"],
                         "platform_id": platform["platform_id"],
                     }
-                    # Extract data from MediaWiki
+
+                    # Extract data from MediaWiki and store in S3
                     await workflow.execute_activity(
                         extract_mediawiki,
                         mediawiki_platform,
@@ -57,8 +58,8 @@ class MediaWikiETLWorkflow:
                         ),
                     )
 
-                    # Transform the extracted data
-                    documents = await workflow.execute_activity(
+                    # Transform the extracted data and store in S3
+                    transformed_data_key = await workflow.execute_activity(
                         transform_mediawiki_data,
                         mediawiki_platform,
                         start_to_close_timeout=timedelta(hours=6),
@@ -68,8 +69,8 @@ class MediaWikiETLWorkflow:
                         ),
                     )
 
-                    mediawiki_platform["documents"] = documents
-                    # Load the transformed data
+                    mediawiki_platform["transformed_data_key"] = transformed_data_key
+                    # Load the transformed data from S3
                     await workflow.execute_activity(
                         load_mediawiki_data,
                         mediawiki_platform,
