@@ -166,3 +166,6 @@ main.ipynb
 *.xml
 
 dump_*
+
+minio_data/
+dumps/*
