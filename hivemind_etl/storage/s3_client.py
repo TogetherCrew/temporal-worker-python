@@ -120,26 +120,3 @@ class S3Client:
                 raise ValueError(f"No data found for key: {key}")
             logging.error(f"Error retrieving data for key {key}: {str(e)}")
             raise
-
-    def get_latest_data(self, community_id: str, activity_type: str) -> Dict[str, Any]:
-        """Get the most recent data for a community and activity type."""
-        prefix = f"{community_id}/{activity_type}/"
-
-        try:
-            response = self.s3_client.list_objects_v2(
-                Bucket=self.bucket_name,
-                Prefix=prefix,
-                MaxKeys=1,
-            )
-
-            if "Contents" not in response:
-                logging.error(f"No data found for prefix: {prefix}")
-                return None
-
-            latest_key = response["Contents"][0]["Key"]
-            return self.get_data_by_key(latest_key)
-
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "NoSuchKey":
-                return None
-            raise
