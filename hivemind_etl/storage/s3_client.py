@@ -13,9 +13,7 @@ from dotenv import load_dotenv
 
 class S3Client:
     def __init__(self):
-        loaded = load_dotenv()
-        if not loaded:
-            raise ValueError("Failed to load environment variables")
+        load_dotenv()
 
         # Get AWS S3 environment variables
         self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
