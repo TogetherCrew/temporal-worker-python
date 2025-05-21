@@ -16,17 +16,16 @@ class S3Client:
         load_dotenv()
 
         # Get AWS S3 environment variables
-        self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
+        # self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
         self.access_key = os.getenv("AWS_ACCESS_KEY_ID")
         self.secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
         self.bucket_name = os.getenv("AWS_S3_BUCKET")
         self.region = os.getenv("AWS_REGION")
-        self.secure = os.getenv("AWS_SECURE", "true").lower() == "true"
 
         # Check each required variable and log if missing
         missing_vars = []
-        if not self.endpoint_url:
-            missing_vars.append("AWS_ENDPOINT_URL")
+        # if not self.endpoint_url:
+        #     missing_vars.append("AWS_ENDPOINT_URL")
         if not self.access_key:
             missing_vars.append("AWS_ACCESS_KEY_ID")
         if not self.secret_key:
@@ -44,8 +43,7 @@ class S3Client:
             raise ValueError(error_msg)
 
         logging.info(
-            f"Initializing S3 client with endpoint: {self.endpoint_url}, "
-            f"bucket: {self.bucket_name}, region: {self.region}, secure: {self.secure}"
+            f"Initializing S3 client with bucket: {self.bucket_name}, region: {self.region}"
         )
 
         # Configure S3 client
@@ -56,11 +54,10 @@ class S3Client:
 
         self.s3_client = boto3.client(
             "s3",
-            endpoint_url=self.endpoint_url,
+            # endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
             config=config,
-            verify=self.secure,
         )
 
         # Ensure bucket exists
