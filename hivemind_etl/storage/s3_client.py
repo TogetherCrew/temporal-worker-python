@@ -16,7 +16,7 @@ class S3Client:
         load_dotenv()
 
         # Get AWS S3 environment variables
-        # self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
+        self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
         self.access_key = os.getenv("AWS_ACCESS_KEY_ID")
         self.secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
         self.bucket_name = os.getenv("AWS_S3_BUCKET")
@@ -24,8 +24,8 @@ class S3Client:
 
         # Check each required variable and log if missing
         missing_vars = []
-        # if not self.endpoint_url:
-        #     missing_vars.append("AWS_ENDPOINT_URL")
+        if not self.endpoint_url:
+            missing_vars.append("AWS_ENDPOINT_URL")
         if not self.access_key:
             missing_vars.append("AWS_ACCESS_KEY_ID")
         if not self.secret_key:
@@ -43,28 +43,22 @@ class S3Client:
             raise ValueError(error_msg)
 
         logging.info(
-            f"Initializing S3 client with bucket: {self.bucket_name}, region: {self.region}"
+            f"Initializing S3 client with endpoint: {self.endpoint_url}, "
+            f"bucket: {self.bucket_name}, region: {self.region}"
         )
 
-        # a region-agnostic client (no region_name) always works for GetBucketLocation
-        self.s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=self.access_key,
-            aws_secret_access_key=self.secret_key,
-            config=Config(signature_version="s3v4"),
+        # Configure S3 client
+        config = Config(
+            signature_version="s3v4",
+            region_name=self.region,
         )
-
-        resp = self.s3_client.get_bucket_location(Bucket=self.bucket_name)
-        self.bucket_region = resp["LocationConstraint"] or "us-east-1"
-
-        logging.info(f"Bucket region: {self.bucket_region}!")
 
         self.s3_client = boto3.client(
             "s3",
-            region_name=self.bucket_region,
+            endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
-            config=Config(signature_version="s3v4"),
+            config=config,
         )
 
         # Ensure bucket exists
