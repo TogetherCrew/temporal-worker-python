@@ -8,10 +8,15 @@ import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
 from llama_index.core import Document
+from dotenv import load_dotenv
 
 
 class S3Client:
     def __init__(self):
+        loaded = load_dotenv()
+        if not loaded:
+            raise ValueError("Failed to load environment variables")
+
         # Get AWS S3 environment variables
         self.endpoint_url = os.getenv("AWS_ENDPOINT_URL")
         self.access_key = os.getenv("AWS_ACCESS_KEY_ID")
