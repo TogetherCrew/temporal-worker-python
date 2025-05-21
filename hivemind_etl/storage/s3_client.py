@@ -57,6 +57,8 @@ class S3Client:
         resp = self.s3_client.get_bucket_location(Bucket=self.bucket_name)
         self.bucket_region = resp["LocationConstraint"] or "us-east-1"
 
+        logging.info(f"Bucket region: {self.bucket_region}!")
+
         self.s3_client = boto3.client(
             "s3",
             region_name=self.bucket_region,
