@@ -46,18 +46,23 @@ class S3Client:
             f"Initializing S3 client with bucket: {self.bucket_name}, region: {self.region}"
         )
 
-        # Configure S3 client
-        config = Config(
-            signature_version="s3v4",
-            region_name=self.region,
+        # a region-agnostic client (no region_name) always works for GetBucketLocation
+        self.s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=self.access_key,
+            aws_secret_access_key=self.secret_key,
+            config=Config(signature_version="s3v4"),
         )
+
+        resp = self.s3_client.get_bucket_location(Bucket=self.bucket_name)
+        self.bucket_region = resp["LocationConstraint"] or "us-east-1"
 
         self.s3_client = boto3.client(
             "s3",
-            # endpoint_url=self.endpoint_url,
+            region_name=self.bucket_region,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
-            config=config,
+            config=Config(signature_version="s3v4"),
         )
 
         # Ensure bucket exists
