@@ -20,7 +20,7 @@ from workflows import (
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
-    IngestionWorkflow,
+    VectorIngestionWorkflow,
     RealTimeSummaryWorkflow,
 )
 
@@ -29,7 +29,7 @@ WORKFLOWS = [
     WebsiteIngestionSchedulerWorkflow,
     MediaWikiETLWorkflow,
     PlatformSummariesWorkflow,
-    IngestionWorkflow,
+    VectorIngestionWorkflow,
     RealTimeSummaryWorkflow,
 ]
 

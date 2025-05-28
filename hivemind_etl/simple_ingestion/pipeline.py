@@ -11,7 +11,7 @@ with workflow.unsafe.imports_passed_through():
 
 
 @workflow.defn
-class IngestionWorkflow:
+class VectorIngestionWorkflow:
     """A Temporal workflow for processing document ingestion requests.
 
     This workflow handles the orchestration of document processing activities,
