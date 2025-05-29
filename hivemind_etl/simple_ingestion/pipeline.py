@@ -68,13 +68,13 @@ async def process_document(
     processing logic, including any necessary embedding or LLM operations.
     """
     if ingestion_request.collectionName is None:
-        collection_name = (
-            f"{ingestion_request.communityId}_{ingestion_request.platformId}"
-        )
+        collection_name = ingestion_request.platformId
     else:
         collection_name = ingestion_request.collectionName
 
     # Initialize the ingestion pipeline
+    # the collection name will be reconstructed in `CustomIngestionPipeline`
+    # in the format of `[communityId]_[collection_name]`
     pipeline = CustomIngestionPipeline(
         community_id=ingestion_request.communityId,
         collection_name=collection_name,
