@@ -106,7 +106,7 @@ class MediawikiETL:
         batch_size = 1000
         batches = [documents[i:i + batch_size] for i in range(0, len(documents), batch_size)]
         
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             # Submit all batch processing tasks
             future_to_batch = {
                 executor.submit(ingestion_pipeline.run_pipeline, batch): i 
