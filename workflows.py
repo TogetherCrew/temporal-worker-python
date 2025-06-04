@@ -9,6 +9,9 @@ from hivemind_etl.website.workflows import (
 )
 from hivemind_etl.mediawiki.workflows import (
     MediaWikiETLWorkflow,
+    ExtractMediaWikiWorkflow,
+    TransformMediaWikiWorkflow,
+    LoadMediaWikiWorkflow,
 )
 from hivemind_etl.simple_ingestion.pipeline import (
     VectorIngestionWorkflow,
