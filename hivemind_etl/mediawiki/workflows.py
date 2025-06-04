@@ -129,7 +129,7 @@ class MediaWikiETLWorkflow:
                         ExtractMediaWikiWorkflow.run,
                         mediawiki_platform,
                         id=f"mediawiki:extract:{platform['community_id']}",
-                        start_to_close_timeout=timedelta(days=5),
+                        execution_timeout=timedelta(days=6),
                     )
 
                     # Transform the extracted data and store in S3
@@ -137,7 +137,7 @@ class MediaWikiETLWorkflow:
                         TransformMediaWikiWorkflow.run,
                         mediawiki_platform,
                         id=f"mediawiki:transform:{platform['community_id']}",
-                        start_to_close_timeout=timedelta(hours=6),
+                        execution_timeout=timedelta(hours=6),
                     )
 
                     mediawiki_platform["transformed_data_key"] = transformed_data_key
@@ -146,7 +146,7 @@ class MediaWikiETLWorkflow:
                         LoadMediaWikiWorkflow.run,
                         mediawiki_platform,
                         id=f"mediawiki:load:{platform['community_id']}",
-                        start_to_close_timeout=timedelta(hours=3),
+                        execution_timeout=timedelta(days=3),
                     )
 
                     logging.info(
