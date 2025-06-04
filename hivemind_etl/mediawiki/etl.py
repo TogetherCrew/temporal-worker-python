@@ -100,7 +100,11 @@ class MediawikiETL:
         ingestion_pipeline = CustomIngestionPipeline(
             self.community_id, collection_name=self.platform_id
         )
-        ingestion_pipeline.run_pipeline(documents)
+        # batch documents into chunks of 1000
+        for i in range(0, len(documents), 1000):
+            logging.info(f"Loading batch {i} of {len(documents)} documents into Qdrant!")
+            ingestion_pipeline.run_pipeline(documents[i : i + 1000])
+
         logging.info(f"Loaded {len(documents)} documents into Qdrant!")
 
         if self.delete_dump_after_load:
