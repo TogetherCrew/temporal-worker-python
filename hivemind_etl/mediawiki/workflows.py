@@ -82,7 +82,7 @@ class LoadMediaWikiWorkflow:
         await workflow.execute_activity(
             load_mediawiki_data,
             mediawiki_platform,
-            start_to_close_timeout=timedelta(hours=3),
+            start_to_close_timeout=timedelta(days=3),
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(minutes=1),
                 maximum_attempts=3,
