@@ -327,8 +327,8 @@ async def fetch_and_summarize_realtime_data(
 
         # Generate summary using OpenAI
         prompt = (
-            "Please provide a concise summary of the following content, focusing on the key points and main themes:"
-            f"{combined_text}"
+            "Please provide a concise summary of the following content, focusing on the key points and main themes. "
+            f"\n\nContent:\n{combined_text}"
         )
 
         response = await client.chat.completions.create(
