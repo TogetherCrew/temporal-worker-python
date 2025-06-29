@@ -103,7 +103,9 @@ class MediawikiETL:
         )
         
         # Process batches in parallel using ThreadPoolExecutor
-        batch_size = 1000
+        # TODO: Revert to larger batch size once llama-index loading issue is resolved
+        # See: https://github.com/TogetherCrew/temporal-worker-python/issues/60
+        batch_size = 1
         batches = [documents[i:i + batch_size] for i in range(0, len(documents), batch_size)]
         
         with ThreadPoolExecutor(max_workers=10) as executor:
