@@ -15,6 +15,7 @@ from hivemind_etl.mediawiki.activities import (
 )
 from hivemind_etl.simple_ingestion.pipeline import (
     process_document,
+    process_documents_batch,
 )
 
 from temporalio import activity

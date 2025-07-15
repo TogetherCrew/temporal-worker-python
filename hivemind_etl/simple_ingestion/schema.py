@@ -37,3 +37,27 @@ class IngestionRequest(BaseModel):
     excludedEmbedMetadataKeys: list[str] = []
     excludedLlmMetadataKeys: list[str] = []
     collectionName: str | None = None
+
+class BatchDocument(BaseModel):
+    """A model representing a document for batch ingestion.
+    
+    """
+    docId: str
+    text: str
+    metadata: dict
+    excludedEmbedMetadataKeys: list[str] = []
+    excludedLlmMetadataKeys: list[str] = []
+
+
+class BatchIngestionRequest(BaseModel):
+    """A model representing a batch of ingestion requests for document processing.
+
+    Parameters
+    ----------
+    ingestion_requests : list[IngestionRequest]
+        A list of ingestion requests.
+    """
+    communityId: str
+    platformId: str
+    collectionName: str | None = None
+    document: list[BatchDocument]

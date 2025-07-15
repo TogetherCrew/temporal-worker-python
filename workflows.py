@@ -15,6 +15,7 @@ from hivemind_etl.mediawiki.workflows import (
 )
 from hivemind_etl.simple_ingestion.pipeline import (
     VectorIngestionWorkflow,
+    BatchVectorIngestionWorkflow,
 )
 from hivemind_summarizer.summarizer_workflow import PlatformSummariesWorkflow
 from hivemind_summarizer.real_time_summary_workflow import RealTimeSummaryWorkflow
