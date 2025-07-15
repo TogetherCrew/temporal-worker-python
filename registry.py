@@ -9,6 +9,7 @@ from hivemind_etl.activities import (
     transform_mediawiki_data,
     load_mediawiki_data,
     process_document,
+    process_documents_batch,
 )
 from hivemind_summarizer.activities import (
     fetch_platform_summaries_by_date,
@@ -24,6 +25,7 @@ from workflows import (
     LoadMediaWikiWorkflow,
     PlatformSummariesWorkflow,
     VectorIngestionWorkflow,
+    BatchVectorIngestionWorkflow,
     RealTimeSummaryWorkflow,
 )
 
@@ -36,6 +38,7 @@ WORKFLOWS = [
     LoadMediaWikiWorkflow,
     PlatformSummariesWorkflow,
     VectorIngestionWorkflow,
+    BatchVectorIngestionWorkflow,
     RealTimeSummaryWorkflow,
 ]
 
@@ -52,5 +55,6 @@ ACTIVITIES = [
     fetch_platform_summaries_by_date,
     fetch_platform_summaries_by_date_range,
     process_document,
+    process_documents_batch,
     fetch_and_summarize_realtime_data,
 ]
