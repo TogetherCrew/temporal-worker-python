@@ -99,7 +99,7 @@ class MediawikiETL:
     def load(self, documents: list[Document]) -> None:
         logging.info(f"Loading {len(documents)} documents into Qdrant!")
         ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name=self.platform_id, use_cache=False
+            self.community_id, collection_name=self.platform_id, use_cache=False,
         )
         
         # Process batches in parallel using ThreadPoolExecutor
