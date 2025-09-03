@@ -30,7 +30,7 @@ class WebsiteETL:
 
         # preparing the ingestion pipeline
         self.ingestion_pipeline = CustomIngestionPipeline(
-            self.community_id, collection_name=self.platform_id
+            self.community_id, collection_name=self.platform_id, use_cache=False,
         )
 
     async def extract(

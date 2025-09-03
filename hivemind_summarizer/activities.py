@@ -97,6 +97,7 @@ async def fetch_platform_summaries_by_date(
             pipeline = CustomIngestionPipeline(
                 community_id=community_id,
                 collection_name=f"{input.platform_id}_summary",
+                use_cache=False,
             )
             # get the latest date from the collection
             latest_date = pipeline.get_latest_document_date(
@@ -211,6 +212,7 @@ async def fetch_platform_summaries_by_date_range(
                 extract_text_only=extract_text_only,
                 platform_id=input.platform_id,
                 community_id=community_id,
+                use_cache=False,
             )
             summaries = await fetch_platform_summaries_by_date(date_input)
             result[date] = summaries

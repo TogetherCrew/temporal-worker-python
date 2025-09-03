@@ -147,6 +147,7 @@ async def process_document(
     pipeline = CustomIngestionPipeline(
         community_id=ingestion_request.communityId,
         collection_name=collection_name,
+        use_cache=False,
     )
 
     document = Document(
@@ -188,6 +189,7 @@ async def process_documents_batch(
     pipeline = CustomIngestionPipeline(
         community_id=batch_chunk.communityId,
         collection_name=collection_name,
+        use_cache=False,
     )
 
     # Convert all documents in this chunk to Document objects
